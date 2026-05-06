@@ -1,0 +1,3397 @@
+# Configurations for the Q-DAS (qdas.py) classes and methods
+# author: j4ggr
+# date: 25.04.2022 
+
+# The Definitions are according to the official documentation for
+# Q-DAS ASCII Transferformat V12 / 2015 Deutsch
+# https://www.q-das.com/fileadmin/mediamanager/Datenformat_Dokumente/Q-DAS_ASCII-Transfer-Format_GER_V12_dc.pdf
+
+index_columns = ['Teilenummer', 'Auftrag', 'Teile ID']
+
+[features]
+  [features.sep]
+    hex = '0x0F'
+    dec = 15
+
+[extensions]
+  [extensions.sep]
+    hex = '0x14'
+    dec = 20
+  [extensions.order]
+    1 = 'Wert'
+    2 = 'Attribut'
+    3 = 'Datum/Zeit'
+    4 = 'Ereignisse'
+    5 = 'Chargennummer'
+    6 = 'Nestnummer'
+    7 = 'Prüfnummer'
+    8 = 'Maschinennummer'
+    9 = 'Prozessparameter'
+    10 = 'Prüfmittelnummer'
+
+[fields]
+  [fields.regex_pattern]
+    header_file = '(K\d+)/?(\d+)? (.+)?'
+    clean_line = '^K\d{4,}'
+
+  # Category allocation of the content based on the thousands
+  [fields.category]
+    0 = 'description'
+    1 = 'part_data'
+    2 = 'feature_data'
+    3 = 'test_plan_data'
+    4 = 'administrative_data'
+    5 = 'structural_information'
+    6 = 'extensions'
+    7 = 'extensions'
+    8 = 'qrk'
+    9 = 'other'
+    10 = 'extensions'
+
+  #Fields that are required in all header files
+  [fields.required]
+    K0100 = 'Merkmalanzahl'
+    K1001 = 'Teilenummer'
+    K1002 = 'Teilebezeichnung'
+    K2001 = 'Merkmalnummer'
+    K2002 = 'Merkmalname'
+
+
+  # Defined k-fields according to the documentation
+  [fields.defined]
+    [fields.defined.K0015]
+      name = 'Untersuchungszweck'
+      [fields.defined.K0015.values]
+        0 = 'Laufende Messung'
+        10 = 'Sondermessung'
+        20 = 'Auditmessung'
+
+    [fields.defined.K1010]
+      name = 'Dokumentationspflicht'
+      [fields.defined.K1010.values]
+        0 = 'Nein'
+        1 = 'Ja / DmbA - Teil/Merkmal'
+        2 = 'S-Teil/Merkmal'
+        3 = 'R-Teil/Merkmal'
+        4 = 'R&S-Teil/Merkmal'
+        5 = 'A-Teil/Merkmal'
+        6 = 'B-Teil/Merkmal'
+        10 = 'Besonderes Teil/Merkmal'
+        11 = 'Besonderes Teil/Merkmal BP 1'
+        12 = 'Besonderes Teil/Merkmal BP 2'
+        13 = 'Besonderes Teil/Merkmal BP 1 SPC'
+        14 = 'Besonderes Teil/Merkmal BP 2 SPC'
+        15 = 'R1'
+        16 = 'R2'
+        17 = 1
+        18 = 2
+        19 = 3
+        20 = 4
+        22 = 'Dokupflicht sicherheitsrelevant'
+        23 = 'Dokupflicht zertifizierungsrelevant'
+        24 = 'Produktionstelevant (keine Dokupflicht)'
+        25 = 'Fertigungsrelevant (keine Dokupflicht)'
+        26 = 'Besonderes Teil/Merkmal F'
+        27 = 'Besonderes Teil/Merkmal L/CoP'
+        28 = 'Besonderes Teil/Merkmal S'
+
+    [fields.defined.K1015]
+      name = 'Untersuchungsart'
+    [fields.defined.K1015.values]
+        1 = 'Zuverlässigkeitsanalyse'
+        10 = 'Stichprobenanalyse'
+        20 = 'Prozessanalyse'
+        30 = 'Messsystemanalyse'
+        50 = 'Regressions-/Varianzanalyse'
+        60 = 'Erstmusterprüfbericht'
+
+    [fields.defined.K1017]
+      name = 'Prüfplanstatus'
+    [fields.defined.K1017.values]
+        0 = 'Frei'
+        1 = 'Gesperrt'
+        2 = 'Abgeschlossen'
+        3 = 'Bewertet'
+
+    [fields.defined.K2006]
+      name = 'Dokumentationspflicht'
+    [fields.defined.K2006.values]
+        0 = 'Nein'
+        1 = 'Ja / DmbA - Teil/Merkmal'
+        2 = 'S-Teil/Merkmal'
+        3 = 'R-Teil/Merkmal'
+        4 = 'R&S-Teil/Merkmal'
+        5 = 'A-Teil/Merkmal'
+        6 = 'B-Teil/Merkmal'
+        10 = 'Besonderes Teil/Merkmal'
+        11 = 'Besonderes Teil/Merkmal BP 1'
+        12 = 'Besonderes Teil/Merkmal BP 2'
+        13 = 'Besonderes Teil/Merkmal BP 1 SPC'
+        14 = 'Besonderes Teil/Merkmal BP 2 SPC'
+        15 = 'R1'
+        16 = 'R2'
+        17 = 1
+        18 = 2
+        19 = 3
+        20 = 4
+        22 = 'Dokupflicht sicherheitsrelevant'
+        23 = 'Dokupflicht zertifizierungsrelevant'
+        24 = 'Produktionstelevant (keine Dokupflicht)'
+        25 = 'Fertigungsrelevant (keine Dokupflicht)'
+        26 = 'Besonderes Teil/Merkmal F'
+        27 = 'Besonderes Teil/Merkmal L/CoP'
+        28 = 'Besonderes Teil/Merkmal S'
+
+    [fields.defined.K2432]
+      name = 'Ankreuzfelder'
+      [fields.defined.K2432.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K2434]
+      name = 'Ankreuzfelder'
+      [fields.defined.K2434.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3020]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3020.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3021]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3021.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3022]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3022.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3108]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3108.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3109]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3109.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3115]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3115.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3442]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3442.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3701]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3701.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3702]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3702.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3703]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3703.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3704]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3704.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3705]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3705.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3706]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3706.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3707]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3707.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3708]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3708.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3709]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3709.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3710]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3710.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3711]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3711.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3712]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3712.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3713]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3713.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3714]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3714.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3750]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3750.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3752]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3752.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3754]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3754.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3756]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3756.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3760]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3760.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+    [fields.defined.K3763]
+      name = 'Ankreuzfelder'
+      [fields.defined.K3763.values]
+        0 = 'nicht angekreuzt'
+        1 = 'angekreuzt'
+
+    [fields.defined.K2004]
+      name = 'Merkmalart'
+      [fields.defined.K2004.values]
+        0 = 'variabel'
+        1 = 'attributiv'
+        2 = 'variabel-klassiert'
+        3 = 'ordinal'
+        4 = 'nominal'
+        5 = 'Fehlerart'
+        6 = 'Fehlersammelkarte'
+
+    [fields.defined.K2005]
+      name = 'Merkmalklasse'
+      [fields.defined.K2005.values]
+        0 = 'unwichtig'
+        1 = 'wenig wichtig'
+        2 = 'wichtig'
+        3 = 'signifikant'
+        4 = 'kritisch'
+
+    [fields.defined.K2007]
+      name = 'Regelungsart'
+      [fields.defined.K2007.values]
+        0 = 'keine Regelung'
+        1 = 'abhängig mitgeregelt'
+        2 = 'manuell'
+        3 = 'automatische Regelung'
+
+    [fields.defined.K2008]
+      name = 'Gruppentyp'
+      [fields.defined.K2008.values]
+        0 = 'keine Gruppe / Koordinate'
+        1 = 'logische Gruppe'
+        2 = 'Positionstoleranz'
+        5 = 'Aufteilung (nach Zusatzdaten)'
+        6 = 'Fehlersammelkarte'
+        8 = 'Best-Fit-Move Gruppe'
+        9 = 'Oberflächenstudie'
+        10 = '3D-Positionstoleranz'
+        11 = 'AFNOR E60-181 max/min'
+        12 = 'MMC (Bohrung)'
+        13 = 'MMC (Welle)'
+        14 = 'VDA 5 neu'
+
+    [fields.defined.K2009]
+      name = 'Messgrösse'
+      [fields.defined.K2009.values]
+        0 = 'undefiniert'
+        100 = 'Geradheit'
+        101 = 'Ebenheit'
+        102 = 'Rundheit'
+        103 = 'Zylinderform'
+        104 = 'Linienform'
+        105 = 'Flächenform'
+        106 = 'Neigung'
+        107 = 'Rechtwinkligkeit'
+        108 = 'Parallelität'
+        109 = 'Position (Betrag)'
+        110 = 'Konzentrizität'
+        111 = 'Symmetrie'
+        112 = 'Rundlauf'
+        113 = 'Gesamtlauf'
+        114 = 'CompCoaxial'
+        115 = 'CompPattern'
+        117 = 'Koordinaten'
+        118 = 'Planlauf'
+        120 = 'X-Koordinate'
+        121 = 'Y-Koordinate'
+        122 = 'Z-Koordinate'
+        125 = 'Versatz'
+        132 = 'Ovalität'
+        140 = 'Bewertungszahl Winkelfläche'
+        145 = 'Oberflächenbearbeitung'
+        149 = 'Freilegetiefe'
+        150 = 'Rauhtiefe Rz'
+        151 = 'Höhe Profil Rt=Pt'
+        152 = 'Mittelw. Profilordinate Ra'
+        153 = 'Profiltiefe Pt'
+        154 = 'Kernrauhtiefe Rk'
+        155 = 'Red. Spitzenhöhe'
+        156 = 'Red. Riefentiefe'
+        157 = 'Rauhigkeit Wt'
+        158 = 'Maximale Rauhtiefe'
+        159 = 'Grundrauhtiefe'
+        160 = 'Materialanteil Pmr'
+        161 = 'Materialanteil Mr1'
+        162 = 'Materialanteil Mr2'
+        170 = 'Dralltiefe'
+        171 = 'Drallwinkel'
+        172 = 'Drallsteigung'
+        180 = 'mittlere dominante Welligkeit'
+        181 = 'max. dominante Welligkeit'
+        182 = 'Länge der dominanten Welligkeit'
+        190 = 'Mittl. Tiefe d. Rauheitsmotifs'
+        191 = 'Max. Tiefe d. Profilunregelmäßigkeit'
+        192 = 'Mittl. Teilung d. Rauheitsmotifs'
+        193 = 'Materialanteil Rmr'
+        194 = 'Materialanteil tp'
+        200 = 'Längenmaß'
+        201 = 'Radius'
+        202 = 'Durchmesser'
+        203 = 'Winkel'
+        204 = 'Ellipse kleiner Ø'
+        205 = 'Ellipse großer Ø'
+        206 = 'Kegelwinkel'
+        207 = 'Innendurchmesser'
+        208 = 'Außendurchmesser'
+        210 = 'Kugelmaß'
+        211 = 'Zahndicke / -höhe'
+        212 = 'Zahndicke auf dem Teilzylinder'
+        214 = 'Zahndickenabmaß (auf dem Teilzylinder)'
+        215 = 'Zahndickenschwankung'
+        216 = 'Zahnweite (über k Meßzähne oder Meßlücken)'
+        220 = 'Federrate'
+        230 = 'Breite'
+        231 = 'Rechtwinkligkeit mit 2 Bezugsachsen'
+        232 = 'Maximaler Durchmesser'
+        233 = 'Minimaler Durchmesser'
+        234 = 'Durchschnittlicher Durchmesser'
+        250 = 'Temperatur [°C]'
+        251 = 'Temperatur [F]'
+        255 = 'Druck [bar]'
+        260 = 'Schichtdicke'
+        270 = 'Volumen'
+        280 = 'Masse'
+        282 = 'Kraft'
+        285 = 'Härte'
+        290 = 'Viskosität'
+        300 = 'Unwucht'
+        301 = 'Drehmoment'
+        302 = 'Anzugsdrehmoment'
+        303 = 'Weiterdrehmoment'
+        310 = '2D Notiz'
+        311 = '3D Notiz'
+        320 = 'Drehwinkel'
+        350 = 'Drehzahl'
+        360 = 'Winkelfehler'
+        362 = 'Profilfehler'
+        364 = 'Geschwindigkeitsfehler'
+        370 = 'Formabweichung'
+        372 = 'Formzuwachs'
+        380 = 'Nockenhöhe'
+        501 = 'Widerstand'
+        502 = 'Kapazität'
+        503 = 'Induktivität'
+        504 = 'Phasenverschiebung'
+        505 = 'Frequenz'
+        506 = 'Stromstärke'
+        507 = 'Spannung'
+        508 = 'Leistung'
+        509 = 'Feldstärke'
+        601 = 'Teilung'
+        602 = 'Teilungssprung'
+        604 = 'Teilungs- Gesamtabweichung'
+        605 = 'Teilungs-Summenabweichung'
+        606 = 'Teilungsschwankung'
+        607 = 'Gesamtteilungsfehler'
+        608 = 'Eingriffteilungs-Abweichung'
+        609 = 'Axialteilungs-Abweichung'
+        610 = 'Kopfkreisdurchmesser'
+        612 = 'Fußkreisdurchmesser'
+        617 = 'Lückenweite auf dem Teilzylinder'
+        620 = 'Linie'
+        621 = 'Flankenlinien-Formabweichung'
+        630 = 'Profil'
+        631 = 'Profil-Formabweichung'
+        632 = 'Profil- Winkelabweichung'
+        633 = 'Profiltaumel'
+        640 = 'Kopfrücknahme'
+        641 = 'Profilballigkeit'
+        642 = 'Breitenballigkeit'
+        643 = 'Höhenballigkeit'
+        651 = 'Flankenlinien- Winkelabweichung'
+        652 = 'Flankenlinientaumel'
+        660 = 'Rundlaufabweichung'
+        661 = 'Außermittigkeit'
+        662 = 'Taumel'
+        663 = 'Koaxialität'
+        670 = 'Zweiflanken-Wälzabweichung'
+        671 = 'Zweiflanken-Wälzsprung'
+        672 = 'Wälzrundlaufabweichung'
+        673 = 'Diametrales Zweikugelmaß'
+        674 = 'Diametrales Zweirollenmaß'
+        675 = 'Radiales Einkugelmaß'
+        676 = 'Radiales Einrollenmaß'
+        800 = 'Zeit'
+        805 = 'Anzahl'
+        820 = 'Geräusch'
+        910 = 'Leckrate'
+        950 = 'Bauteilsauberkeit'
+        955 = 'Rest-Partikel'
+      [fields.defined.K2009.comments]
+        125 = 'ab 10/130823'
+        132 = 'ab 10/130823'
+        193 = 'ab 10/130823'
+        194 = 'ab 10/130823'
+        207 = 'ab 10/130823'
+        208 = 'ab 10/130823'
+        212 = 'ab 10/130823'
+        214 = 'ab 10/130823'
+        215 = 'ab 10/130823'
+        216 = 'ab 10/130823'
+        230 = 'ab V11/150515'
+        231 = 'ab V11/150515'
+        232 = 'ab V11/150515'
+        233 = 'ab V11/150515'
+        234 = 'ab V11/150515'
+        310 = 'ab 10/130823'
+        311 = 'ab 10/130823'
+        360 = 'ab 10/130823'
+        362 = 'ab 10/130823'
+        364 = 'ab 10/130823'
+        370 = 'ab 10/130823'
+        372 = 'ab 10/130823'
+        380 = 'ab 10/130823'
+        606 = 'ab 10/130823'
+        608 = 'ab 10/130823'
+        609 = 'ab 10/130823'
+        610 = 'ab 10/130823'
+        612 = 'ab 10/130823'
+        617 = 'ab 10/130823'
+        661 = 'ab 10/130823'
+        670 = 'ab 10/130823'
+        671 = 'ab 10/130823'
+        672 = 'ab 10/130823'
+        673 = 'ab 10/130823'
+        674 = 'ab 10/130823'
+        675 = 'ab 10/130823'
+        676 = 'ab 10/130823'
+        805 = 'ab 10/130823'
+        950 = 'ab 10/130823'
+        955 = 'ab 10/130823'
+
+    [fields.defined.K2011]
+      name = 'Verteilungsart'
+      [fields.defined.K2011.values]
+        1 = 'Normalverteilung'
+        2 = 'Log. Normalverteilung'
+        4 = 'Wurzeltransformierte Normalverteilung'
+        11 = 'Betragsverteilung 1. Art [0]'
+        12 = 'Raleighverteilung/Betragsverteilung 2. Art [0]'
+        21 = 'Betragsverteilung 1. Art [<> 0]'
+        22 = 'Raleighverteilung/Betragsverteilung 2. Art [<> 0]'
+        30 = 'Weibullverteilung'
+        91 = 'Johnson-Transformation'
+        92 = 'Mischverteilung'
+        99 = 'Pearson-Verteilungssystem'
+        100 = 'Binomialverteilung'
+        200 = 'Poissonverteilung'
+
+    [fields.defined.K2015]
+      name = 'Art der Abnutzung'
+      [fields.defined.K2015.values]
+        0 = 'Undefiniert'
+        1 = 'Steigend'
+        2 = 'Fallend'
+
+    [fields.defined.K2016]
+      name = '100% Messung'
+      [fields.defined.K2016.values]
+        0 = 'Nein'
+        1 = 'Ja'
+
+    [fields.defined.K2017]
+      name = 'Art der Alarmermittlung'
+      [fields.defined.K2017.values]
+        0 = 'Standard'
+        1 = 'Alarme immer ermitteln'
+        2 = 'Alarme nicht ermitteln'
+
+    [fields.defined.K2018]
+      name = 'Akzeptanzgrenzen erweitert'
+      [fields.defined.K2018.values]
+        0 = 'Nein'
+        1 = 'Ja'
+
+    [fields.defined.K2080]
+      name = 'Merkmalsstatus'
+      [fields.defined.K2080.values]
+        0 = 'Aktiviert'
+        1 = 'Deaktiviert'
+        2 = 'Merkmal von der Eingabe ausgeschlossen/Deaktiviert für die Auswertung im neuen VDA5*'
+        4 = 'Merkmal vom Upload ausschliessen'
+        8 = 'Messwerte vom Upload ausschliessen'
+        128 = 'Merkmal von der Punktbewertung ausschliessen'
+
+    [fields.defined.K2120]
+      name = 'Art der Grenze'
+      [fields.defined.K2120.values]
+        0 = 'keine Grenze'
+        1 = 'Grenzwert'
+        2 = 'natürliche Grenze'
+
+    [fields.defined.K2121]
+      name = 'Art der Grenze'
+      [fields.defined.K2121.values]
+        0 = 'keine Grenze'
+        1 = 'Grenzwert'
+        2 = 'natürliche Grenze'
+
+    [fields.defined.K2202]
+      name = 'Auswertetyp'
+      [fields.defined.K2202.values]
+        1 = 'Typ 1'
+        2 = 'Typ 2'
+        3 = 'Typ 3'
+        4 = 'Cnomo 1'
+        5 = 'Cnomo 2'
+        42 = 'Typ 4'
+        51 = 'Typ 5'
+        72 = 'GM Typ 2'
+        73 = 'GM Typ 3'
+        81 = 'GM Typ 1A'
+        92 = 'Short Range'
+        93 = 'Stabilität'
+        94 = 'Linearität'
+        95 = 'Attributiv'
+        52 = 'Einflusskomponente mit Messwerten'
+        55 = 'Einflusskomponente'
+        98 = 'Prüfsystem'
+        99 = 'Prüfprozess'
+        100 = 'Unsicherheitsstudie VDA/ISO'
+        104 = 'Wiederholbarkeit am Normal'
+        108 = 'Messwerte der Prüfobjekte'
+      [fields.defined.K2202.comments]
+        1 = 'Einzelmerkmalsbetrachtung'
+        2 = 'Einzelmerkmalsbetrachtung'
+        3 = 'Einzelmerkmalsbetrachtung'
+        4 = 'Einzelmerkmalsbetrachtung'
+        5 = 'Einzelmerkmalsbetrachtung'
+        42 = 'Einzelmerkmalsbetrachtung'
+        51 = 'Einzelmerkmalsbetrachtung'
+        72 = 'Einzelmerkmalsbetrachtung'
+        73 = 'Einzelmerkmalsbetrachtung'
+        81 = 'Einzelmerkmalsbetrachtung'
+        92 = 'Einzelmerkmalsbetrachtung'
+        93 = 'Einzelmerkmalsbetrachtung'
+        94 = 'Einzelmerkmalsbetrachtung'
+        95 = 'Einzelmerkmalsbetrachtung'
+        52 = 'Nur im VDA5 (neu) zu nutzen'
+        55 = 'Nur im VDA5 (neu) zu nutzen'
+        98 = 'Nur im VDA5 (neu) zu nutzen'
+        99 = 'Nur im VDA5 (neu) zu nutzen'
+        100 = 'Nur im VDA5 (neu) zu nutzen'
+        104 = 'Nur im VDA5 (neu) zu nutzen'
+        108 = 'Nur im VDA5 (neu) zu nutzen'
+
+    [fields.defined.K2430]
+      name = 'Prüfungsarten'
+      [fields.defined.K2430.values]
+        1 = 'Funktionsprüfung'
+        2 = 'Maßprüfung'
+        3 = 'Werkstoffprüfung'
+        4 = 'Zuverlässigkeitsprüfung'
+        5 = 'Prozessfähigkeitsnachweis'
+        6 = 'Prozessablaufdiagramm'
+        7 = 'Prüfmittelfähigkeitsnachweis'
+        8 = 'Prüfmittelliste'
+        9 = 'EG-Datensicherheitsblatt'
+        10 = 'Haptik'
+        11 = 'Akustik'
+        12 = 'Geruch'
+        13 = 'Erscheinungsbild'
+        14 = 'Zertifikate'
+        15 = 'Konstruktionsfreigabe'
+        16 = 'Inhaltsstoffe in Zukaufteilen'
+        17 = 'Sonstiges'
+        18 = 'Werkstoff- und Funktionsprüfung'
+
+    [fields.defined.K3030]
+      name = 'Prüfungsarten'
+      [fields.defined.K3030.values]
+        1 = 'Funktionsprüfung'
+        2 = 'Maßprüfung'
+        3 = 'Werkstoffprüfung'
+        4 = 'Zuverlässigkeitsprüfung'
+        5 = 'Prozessfähigkeitsnachweis'
+        6 = 'Prozessablaufdiagramm'
+        7 = 'Prüfmittelfähigkeitsnachweis'
+        8 = 'Prüfmittelliste'
+        9 = 'EG-Datensicherheitsblatt'
+        10 = 'Haptik'
+        11 = 'Akustik'
+        12 = 'Geruch'
+        13 = 'Erscheinungsbild'
+        14 = 'Zertifikate'
+        15 = 'Konstruktionsfreigabe'
+        16 = 'Inhaltsstoffe in Zukaufteilen'
+        17 = 'Sonstiges'
+        18 = 'Werkstoff- und Funktionsprüfung'
+
+    [fields.defined.K3440]
+      name = 'Prüfungsarten'
+      [fields.defined.K3440.values]
+        1 = 'Funktionsprüfung'
+        2 = 'Maßprüfung'
+        3 = 'Werkstoffprüfung'
+        4 = 'Zuverlässigkeitsprüfung'
+        5 = 'Prozessfähigkeitsnachweis'
+        6 = 'Prozessablaufdiagramm'
+        7 = 'Prüfmittelfähigkeitsnachweis'
+        8 = 'Prüfmittelliste'
+        9 = 'EG-Datensicherheitsblatt'
+        10 = 'Haptik'
+        11 = 'Akustik'
+        12 = 'Geruch'
+        13 = 'Erscheinungsbild'
+        14 = 'Zertifikate'
+        15 = 'Konstruktionsfreigabe'
+        16 = 'Inhaltsstoffe in Zukaufteilen'
+        17 = 'Sonstiges'
+        18 = 'Werkstoff- und Funktionsprüfung'
+
+    [fields.defined.K2501]
+      name = 'Bemassungsattribut'
+      [fields.defined.K2501.values]
+        0 = 'keine Angabe'
+        1 = 'Basisbemassung'
+        2 = 'Prüfbemassung'
+
+    [fields.defined.K2502]
+      name = 'Darstellungsformat Toleranz'
+      [fields.defined.K2502.values]
+        0 = 'Nominal (10 oder 10 H7)'
+        1 = 'Grenzen (Limits) (9,9-10,1)'
+        2 = 'plusminus (10 +/-0,1 Abmaß kann oben anders sein als unten, z. B. 10 +0.2 – 0,1)'
+        3 = 'PlusMinusSymbol (wie 2 Abmaß oben und unten gleich, z.B. 10 +/- 0.1)'
+
+    [fields.defined.K2503]
+      name = 'Bemassungstyp'
+      [fields.defined.K2503.values]
+        0 = 'undefiniert'
+        1 = 'Zeichnungsmass'
+        2 = 'Modellmass'
+        3 = 'Referenzmass'
+
+    [fields.defined.K2504]
+      name = 'Zeichnungsänderung Status'
+      [fields.defined.K2504.values]
+        0 = 'keine Änderung (im Vergleich zur letzten Zeichnung)'
+        1 = 'geändertes Merkmal (im Vergleich zur letzten Zeichnung)'
+        2 = 'neues Merkmal (im Vergleich zur letzten Zeichnung)'
+        3 = 'gelöschtes Merkmal'
+
+    [fields.defined.K3035]
+      name = 'Bemusterungsgrund'
+      [fields.defined.K3035.values]
+        1 = 'Neuteil'
+        2 = 'Produktänderung'
+        3 = 'Produktionsverlagerung'
+        4 = 'Änderung von Produktionsverfahren'
+        5 = 'längeres Aussetzen der Fertigung'
+        6 = 'neuer Unterlieferant'
+        7 = 'Produkt mit DmbA'
+        8 = 'Fertigungs-/Prüfplan erstellt'
+        9 = 'FMEA durchgeführt'
+        10 = 'geänderte Spezifikation'
+        11 = 'geänderte Fertigungsbedingungen'
+        12 = 'Initial Submission'
+        13 = 'Tooling = Transfer, Replacement, Refurbishment or additional'
+        14 = 'Correction of Discrepancy'
+        15 = 'Change to Optional Construction or Material'
+        16 = 'Change in Part Processing'
+        17 = 'Other - please specify'
+
+    [fields.defined.K3037]
+      name = 'Submission Level'
+      [fields.defined.K3037.values]
+        1 = 'Level 1'
+        2 = 'Level 2'
+        3 = 'Level 3'
+        4 = 'Level 4'
+        5 = 'Level 5'
+
+    [fields.defined.K3040]
+      name = 'Art der ermittelten Prozessfähigkeit'
+      [fields.defined.K3040.values]
+        1 = 'voraussichtliche Prozessfähigkeit'
+        2 = 'vorläufige Prozessfähigkeit'
+        3 = 'Prozessfähigkeit in der Serie'
+
+    [fields.defined.K3112]
+      name = 'Durchgeführte Untersuchung'
+      [fields.defined.K3112.values]
+        1 = 'Überprüfte Zeichnungen'
+        2 = 'Materialprüfergebnisse'
+        3 = 'Kontrollplan'
+        4 = 'Zusätzliche Zeichnungen/Skizzen'
+        5 = 'Zertifikate'
+        6 = 'Prozessfähigkeits-Nachweise'
+        7 = 'Genaue Anzahl der Musterteile'
+        8 = 'Funktions (ES) Test-Ergebnisse'
+        9 = 'Fertigungsablauf-Diagramm'
+        10 = 'Dimensionelle Ergebnisse'
+        11 = 'Genehmigung der Produktentwicklung'
+        12 = 'Lehrenfähigkeits-Nachweise'
+        13 = 'FMEA'
+        14 = 'selbstzertifizierender Lieferant'
+
+    [fields.defined.K3420]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3420.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3421]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3421.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3422]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3422.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3423]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3423.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3424]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3424.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3425]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3425.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3426]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3426.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3427]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3427.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3428]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3428.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3429]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3429.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3430]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3430.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3431]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3431.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3432]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3432.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3433]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3433.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3434]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3434.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3435]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3435.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3436]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3436.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3437]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3437.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K3438]
+      name = 'Gesamtentscheid und Entscheidungen zu Einzel-prüfungen'
+      [fields.defined.K3438.values]
+        1 = 'freigegeben'
+        2 = 'freigegeben mit Auflage'
+        3 = 'abgelehnt, neue Muster erforderlich'
+        4 = 'abgelehnt, mit Maßnahmen verbaubar'
+        5 = 'abgelehnt'
+        6 = 'andere'
+
+    [fields.defined.K8501]
+      name = 'Stichprobenart'
+      [fields.defined.K8501.values]
+        0 = 'fest'
+        1 = 'gleitend'
+        2 = 'Pseudo-fest'
+
+    [fields.defined.K8503]
+      name = 'Stichprobenart attributiv'
+      [fields.defined.K8503.values]
+        0 = 'Variabel'
+        1 = 'Konstant'
+        2 = 'Einzelspeicherung'
+
+    [fields.defined.K8530]
+      name = 'Prozessstabilität'
+      [fields.defined.K8530.values]
+        1 = 'Stabil'
+        2 = 'nicht stabil'
+
+
+  # Supported k-fields according to the documentation
+  [fields.supported]
+    [fields.supported.K0100]
+      dtype = 'int16'
+      name = 'Gesamtanzahl Merkmale in der Datei'
+    [fields.supported.K1052]
+      dtype = 'string'
+      name = 'Auftraggeber Bezeichnung'
+    [fields.supported.K1062]
+      dtype = 'string'
+      name = 'Kunde Bezeichnung'
+    [fields.supported.K0001]
+      dtype = 'float'
+      name = 'Werte'
+    [fields.supported.K0002]
+      dtype = 'int16'
+      name = 'Attribut'
+    [fields.supported.K0004]
+      dtype = 'datetime'
+      name = 'Zeit/Datum'
+    [fields.supported.K0005]
+      dtype = 'object'
+      name = 'Ereignisse'
+    [fields.supported.K0006]
+      dtype = 'string'
+      name = 'Chargennummer / Identnummer'
+    [fields.supported.K0007]
+      dtype = 'int32'
+      name = 'Nestnummer / Spindelnummer'
+    [fields.supported.K0008]
+      dtype = 'int32'
+      name = "Prüfer"
+    [fields.supported.K0009]
+      dtype = 'string'
+      name = 'Text'
+    [fields.supported.K0010]
+      dtype = 'int32'
+      name = 'Maschine'
+    [fields.supported.K0011]
+      dtype = 'object'
+      name = 'Prozessparameter'
+    [fields.supported.K0012]
+      dtype = 'int32'
+      name = "Prüfmittel"
+    [fields.supported.K0014]
+      dtype = 'string'
+      name = 'Teile Ident'
+    [fields.supported.K0015]
+      dtype = 'int16'
+      name = 'Untersuchungszweck'
+    [fields.supported.K0016]
+      dtype = 'string'
+      name = 'Produktionsnummer'
+    [fields.supported.K0017]
+      dtype = 'string'
+      name = "Werkstückträgernummer"
+    [fields.supported.K0020]
+      dtype = 'int16'
+      name = 'Stichprobenumfang '
+    [fields.supported.K0021]
+      dtype = 'int16'
+      name = 'Anzahl Fehler'
+    [fields.supported.K0053]
+      dtype = 'string'
+      name = 'Auftragsnummer'
+    [fields.supported.K0054]
+      dtype = 'string'
+      name = 'K0054'
+    [fields.supported.K0055]
+      dtype = 'string'
+      name = 'K0055'
+    [fields.supported.K0056]
+      dtype = 'string'
+      name = 'K0056'
+    [fields.supported.K0057]
+      dtype = 'string'
+      name = 'K0057'
+    [fields.supported.K0058]
+      dtype = 'string'
+      name = 'K0058'
+    [fields.supported.K0059]
+      dtype = 'string'
+      name = 'K0059'
+    [fields.supported.K0060]
+      dtype = 'string'
+      name = 'K0060'
+    [fields.supported.K0061]
+      dtype = 'int32'
+      name = 'K0061'
+    [fields.supported.K0062]
+      dtype = 'int32'
+      name = 'K0062'
+    [fields.supported.K0063]
+      dtype = 'int32'
+      name = 'K0063'
+    [fields.supported.K0080]
+      dtype = 'string'
+      name = 'Stichproben-Ident'
+    [fields.supported.K0081]
+      dtype = 'int16'
+      name = 'Messwertposition in der Stichprobe'
+    [fields.supported.K0097]
+      dtype = 'object'
+      name = 'Werte GUID'
+    [fields.supported.K0999]
+      dtype = 'int16'
+      name = 'Anzahl Merkmale pro Teil = 0'
+    [fields.supported.K1001]
+      dtype = 'string'
+      name = 'Teil Nummer'
+    [fields.supported.K1002]
+      dtype = 'string'
+      name = 'Teil Bezeichnung'
+    [fields.supported.K1003]
+      dtype = 'string'
+      name = 'Teil Kurzbezeichnung'
+    [fields.supported.K1004]
+      dtype = 'string'
+      name = 'Änderungsstand Teil'
+    [fields.supported.K1005]
+      dtype = 'string'
+      name = 'Erzeugnis'
+    [fields.supported.K1007]
+      dtype = 'string'
+      name = 'Teilenummer Kurzbezeichnung'
+    [fields.supported.K1008]
+      dtype = 'string'
+      name = 'Teiletyp'
+    [fields.supported.K1009]
+      dtype = 'string'
+      name = 'Teilecode'
+    [fields.supported.K1010]
+      dtype = 'int8'
+      name = 'Dokumentationspflicht'
+    [fields.supported.K1011]
+      dtype = 'string'
+      name = 'Variante'
+    [fields.supported.K1012]
+      dtype = 'string'
+      name = 'Sachnummer-Zusatz'
+    [fields.supported.K1013]
+      dtype = 'string'
+      name = 'Sachnummer-Index'
+    [fields.supported.K1014]
+      dtype = 'string'
+      name = 'Teileident'
+    [fields.supported.K1015]
+      dtype = 'int8'
+      name = 'Untersuchungsart'
+    [fields.supported.K1016]
+      dtype = 'string'
+      name = 'Zusammenbauteil'
+    [fields.supported.K1017]
+      dtype = 'int8'
+      name = "Prüfplanstatus"
+    [fields.supported.K1020]
+      dtype = 'int16'
+      name = 'Hersteller Katalog'
+    [fields.supported.K1021]
+      dtype = 'string'
+      name = 'Hersteller Nummer Text'
+    [fields.supported.K1022]
+      dtype = 'string'
+      name = 'Hersteller Name'
+    [fields.supported.K1023]
+      dtype = 'int32'
+      name = 'Hersteller Nummer'
+    [fields.supported.K1030]
+      dtype = 'int16'
+      name = 'Werkstoff Katalog'
+    [fields.supported.K1031]
+      dtype = 'string'
+      name = 'Werkstoff Nummer Text'
+    [fields.supported.K1032]
+      dtype = 'string'
+      name = 'Werkstoff Bezeichnung'
+    [fields.supported.K1033]
+      dtype = 'int32'
+      name = 'Werkstoff Nummer'
+    [fields.supported.K1040]
+      dtype = 'int16'
+      name = 'Zeichnung Katalog'
+    [fields.supported.K1041]
+      dtype = 'string'
+      name = 'Zeichnung Nummer Text'
+    [fields.supported.K1042]
+      dtype = 'string'
+      name = "Zeichnung Änderung"
+    [fields.supported.K1043]
+      dtype = 'string'
+      name = 'Zeichnung Index'
+    [fields.supported.K1044]
+      dtype = 'int32'
+      name = 'Zeichnung Nummer'
+    [fields.supported.K1045]
+      dtype = 'string'
+      name = "Zeichnungsgültigkeitsdatum"
+    [fields.supported.K1046]
+      dtype = 'string'
+      name = 'Zeichnungsname'
+    [fields.supported.K1047]
+      dtype = 'string'
+      name = 'Grundzeichnung Nummer'
+    [fields.supported.K1048]
+      dtype = 'string'
+      name = 'CAD Zeichnungsdateiname'
+    [fields.supported.K1050]
+      dtype = 'int16'
+      name = 'Auftraggeber Katalog'
+    [fields.supported.K1051]
+      dtype = 'string'
+      name = 'Auftraggeber Nummer Text'
+    [fields.supported.K1053]
+      dtype = 'string'
+      name = 'Auftrag'
+    [fields.supported.K1054]
+      dtype = 'int32'
+      name = 'Auftraggeber Nummer'
+    [fields.supported.K1060]
+      dtype = 'int16'
+      name = 'Kunden Katalog'
+    [fields.supported.K1061]
+      dtype = 'string'
+      name = 'Kunde Nummer Text'
+    [fields.supported.K1063]
+      dtype = 'int32'
+      name = 'Kunde Nummer'
+    [fields.supported.K1070]
+      dtype = 'int16'
+      name = 'Lieferanten Katalog'
+    [fields.supported.K1071]
+      dtype = 'string'
+      name = 'Lieferant Nummer Text'
+    [fields.supported.K1072]
+      dtype = 'string'
+      name = 'Lieferant Bezeichnung'
+    [fields.supported.K1073]
+      dtype = 'int16'
+      name = 'Lieferant Nummer'
+    [fields.supported.K1080]
+      dtype = 'int16'
+      name = 'Maschinen Katalog'
+    [fields.supported.K1081]
+      dtype = 'string'
+      name = 'Maschine Nummer Text'
+    [fields.supported.K1082]
+      dtype = 'string'
+      name = 'Maschine Bezeichnung'
+    [fields.supported.K1083]
+      dtype = 'int16'
+      name = 'Maschine Nummer'
+    [fields.supported.K1085]
+      dtype = 'string'
+      name = 'Maschine Standort'
+    [fields.supported.K1086]
+      dtype = 'string'
+      name = 'Arbeitsgang / Operation'
+    [fields.supported.K1087]
+      dtype = 'string'
+      name = 'Arbeitsgang Bezeichnung'
+    [fields.supported.K1091]
+      dtype = 'string'
+      name = 'Linien Nummer'
+    [fields.supported.K1092]
+      dtype = 'string'
+      name = 'Linie Bezeichnung'
+    [fields.supported.K1100]
+      dtype = 'string'
+      name = 'Bereich im Werk'
+    [fields.supported.K1101]
+      dtype = 'string'
+      name = 'Abteilung'
+    [fields.supported.K1102]
+      dtype = 'string'
+      name = 'Werkstatt'
+    [fields.supported.K1103]
+      dtype = 'string'
+      name = 'Kostenstelle'
+    [fields.supported.K1104]
+      dtype = 'string'
+      name = 'Schicht'
+    [fields.supported.K1105]
+      dtype = 'string'
+      name = 'Werksbereich-Nummer'
+    [fields.supported.K1106]
+      dtype = 'string'
+      name = 'Abteilungs-Nummer'
+    [fields.supported.K1107]
+      dtype = 'string'
+      name = 'Werkstatt-Nummer'
+    [fields.supported.K1108]
+      dtype = 'string'
+      name = 'Kostenstellen-Nummer'
+    [fields.supported.K1110]
+      dtype = 'string'
+      name = 'Bestellnummer'
+    [fields.supported.K1111]
+      dtype = 'string'
+      name = 'Wareneingangsnummer'
+    [fields.supported.K1112]
+      dtype = 'string'
+      name = "Würfel"
+    [fields.supported.K1113]
+      dtype = 'string'
+      name = 'Position'
+    [fields.supported.K1114]
+      dtype = 'string'
+      name = 'Vorrichtung'
+    [fields.supported.K1115]
+      dtype = 'string'
+      name = 'Fertigungsdatum'
+    [fields.supported.K1201]
+      dtype = 'string'
+      name = "Prüfeinrichtung Nummer Text"
+    [fields.supported.K1202]
+      dtype = 'string'
+      name = "Prüfeinrichtung Bezeichnung"
+    [fields.supported.K1203]
+      dtype = 'string'
+      name = "Prüfgrund"
+    [fields.supported.K1204]
+      dtype = 'datetime'
+      name = "Prüfbeginn"
+    [fields.supported.K1205]
+      dtype = 'datetime'
+      name = "Prüfende"
+    [fields.supported.K1206]
+      dtype = 'string'
+      name = "Prüfplatz"
+    [fields.supported.K1207]
+      dtype = 'string'
+      name = "Prüfplanersteller"
+    [fields.supported.K1208]
+      dtype = 'int32'
+      name = "Prüfeinrichtung Nummer"
+    [fields.supported.K1209]
+      dtype = 'string'
+      name = "Prüfart (Messkennzeichen)"
+    [fields.supported.K1210]
+      dtype = 'int32'
+      name = 'Messtyp'
+    [fields.supported.K1211]
+      dtype = 'string'
+      name = 'Normalnummer (Text)'
+    [fields.supported.K1212]
+      dtype = 'string'
+      name = 'Normalbezeichnung'
+    [fields.supported.K1215]
+      dtype = 'int32'
+      name = 'Normalnummer'
+    [fields.supported.K1221]
+      dtype = 'string'
+      name = "Prüfernummer (Text)"
+    [fields.supported.K1222]
+      dtype = 'string'
+      name = "Prüfername"
+    [fields.supported.K1223]
+      dtype = 'int32'
+      name = "Prüfernummer"
+    [fields.supported.K1230]
+      dtype = 'string'
+      name = "Messraum"
+    [fields.supported.K1231]
+      dtype = 'string'
+      name = "Messprogrammnummer"
+    [fields.supported.K1232]
+      dtype = 'string'
+      name = "Messprogrammversion"
+    [fields.supported.K1301]
+      dtype = 'int16'
+      name = 'Mandant'
+    [fields.supported.K1302]
+      dtype = 'string'
+      name = "Prüflos"
+    [fields.supported.K1303]
+      dtype = 'string'
+      name = 'Werk'
+    [fields.supported.K1304]
+      dtype = 'string'
+      name = 'Werk-Nummer'
+    [fields.supported.K1311]
+      dtype = 'string'
+      name = 'Fertigungsauftrag'
+    [fields.supported.K1341]
+      dtype = 'string'
+      name = "Prüfplannummer Text"
+    [fields.supported.K1342]
+      dtype = 'string'
+      name = "Prüfplanname"
+    [fields.supported.K1343]
+      dtype = 'datetime'
+      name = "Prüfplan Erstellungsdatum"
+    [fields.supported.K1344]
+      dtype = 'string'
+      name = "Prüfplan Ersteller"
+    [fields.supported.K1350]
+      dtype = 'string'
+      name = 'Ausgabe-Berichtsdatei'
+    [fields.supported.K1800]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 1'
+    [fields.supported.K1801]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 1'
+    [fields.supported.K1802]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 1'
+    [fields.supported.K1810]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 2'
+    [fields.supported.K1811]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 2'
+    [fields.supported.K1812]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 2'
+    [fields.supported.K1820]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 3'
+    [fields.supported.K1821]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 3'
+    [fields.supported.K1822]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 3'
+    [fields.supported.K1830]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 4'
+    [fields.supported.K1831]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 4'
+    [fields.supported.K1832]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 4'
+    [fields.supported.K1840]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 5'
+    [fields.supported.K1841]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 5'
+    [fields.supported.K1842]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 5'
+    [fields.supported.K1850]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 6'
+    [fields.supported.K1851]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 6'
+    [fields.supported.K1852]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 6'
+    [fields.supported.K1860]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 7'
+    [fields.supported.K1861]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 7'
+    [fields.supported.K1862]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 7'
+    [fields.supported.K1870]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 8'
+    [fields.supported.K1871]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 8'
+    [fields.supported.K1872]
+      dtype = 'string'
+      name = 'Benutzer, Feldinhalt 8'
+    [fields.supported.K1880]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 9'
+    [fields.supported.K1881]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 9'
+    [fields.supported.K1882]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 9'
+    [fields.supported.K1890]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 10'
+    [fields.supported.K1891]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 10'
+    [fields.supported.K1892]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 10'
+    [fields.supported.K1900]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.supported.K1997]
+      dtype = 'object'
+      name = 'Teile GUID'
+    [fields.supported.K1998]
+      dtype = 'string'
+      name = 'Interne Konfiguration der Teileebene (reserviert)'
+    [fields.supported.K2001]
+      dtype = 'string'
+      name = 'Merkmal Nummer'
+    [fields.supported.K2002]
+      dtype = 'string'
+      name = 'Merkmal Bezeichnung'
+    [fields.supported.K2003]
+      dtype = 'string'
+      name = 'Merkmal Kurztext'
+    [fields.supported.K2004]
+      dtype = 'int16'
+      name = 'Merkmal Art'
+    [fields.supported.K2005]
+      dtype = 'int16'
+      name = 'Merkmal Klasse'
+    [fields.supported.K2006]
+      dtype = 'int16'
+      name = 'Dokumentationspflicht'
+    [fields.supported.K2007]
+      dtype = 'int16'
+      name = 'Regelungsart'
+    [fields.supported.K2008]
+      dtype = 'int16'
+      name = 'Gruppentyp'
+    [fields.supported.K2009]
+      dtype = 'int16'
+      name = "Messgrösse"
+    [fields.supported.K2011]
+      dtype = 'int16'
+      name = 'gespeicherte Verteilung'
+    [fields.supported.K2013]
+      dtype = 'float'
+      name = 'Klassenweite'
+    [fields.supported.K2015]
+      dtype = 'int8'
+      name = 'Art der Abnutzung (Trend)'
+    [fields.supported.K2016]
+      dtype = 'int8'
+      name = '100% Messung'
+    [fields.supported.K2017]
+      dtype = 'int8'
+      name = 'Art der Alarmermittlung'
+    [fields.supported.K2018]
+      dtype = 'int8'
+      name = 'Akzeptanzgrenzen erweitert'
+    [fields.supported.K2019]
+      dtype = 'int16'
+      name = 'Ordinalklassenkatalog'
+    [fields.supported.K2021]
+      dtype = 'string'
+      name = "Verknüpfungsstring"
+    [fields.supported.K2022]
+      dtype = 'int16'
+      name = 'Nachkommastellen'
+    [fields.supported.K2023]
+      dtype = 'int8'
+      name = 'Transformation Art'
+    [fields.supported.K2024]
+      dtype = 'float'
+      name = 'Transformation Parameter a'
+    [fields.supported.K2025]
+      dtype = 'float'
+      name = 'Transformation Parameter b'
+    [fields.supported.K2026]
+      dtype = 'float'
+      name = 'Transformation Parameter c'
+    [fields.supported.K2027]
+      dtype = 'float'
+      name = 'Transformation Parameter d'
+    [fields.supported.K2028]
+      dtype = 'int8'
+      name = "natürliche Verteilung"
+    [fields.supported.K2030]
+      dtype = 'int16'
+      name = 'Gruppennummer / FSK-Nummer'
+    [fields.supported.K2031]
+      dtype = 'int16'
+      name = 'Gruppenelement Nummer / FSK Nummer bei Fehlerart einer FSK'
+    [fields.supported.K2035]
+      dtype = 'datetime'
+      name = 'Kalibrierdatum'
+    [fields.supported.K2041]
+      dtype = 'int8'
+      name = 'Erfassungsart'
+    [fields.supported.K2042]
+      dtype = 'int16'
+      name = "Erfassungsgerät Nummer"
+    [fields.supported.K2043]
+      dtype = 'string'
+      name = "Erfassungsgerät Name"
+    [fields.supported.K2044]
+      dtype = 'int16'
+      name = "Erfassungsgerät Index"
+    [fields.supported.K2045]
+      dtype = 'int8'
+      name = 'Erfassung Kanal'
+    [fields.supported.K2046]
+      dtype = 'int8'
+      name = 'Messungsart'
+    [fields.supported.K2047]
+      dtype = 'int8'
+      name = 'Softwareanforderung Index'
+    [fields.supported.K2048]
+      dtype = 'int8'
+      name = "Übernahmekanal"
+    [fields.supported.K2049]
+      dtype = 'int8'
+      name = 'Kanalinitialisierung-Index'
+    [fields.supported.K2051]
+      dtype = 'int8'
+      name = 'Schnittstelle'
+    [fields.supported.K2052]
+      dtype = 'int16'
+      name = 'Baudrate'
+    [fields.supported.K2053]
+      dtype = 'int8'
+      name = 'IRQ Nummer'
+    [fields.supported.K2054]
+      dtype = 'int8'
+      name = "Parität"
+    [fields.supported.K2055]
+      dtype = 'int8'
+      name = 'Datenbits'
+    [fields.supported.K2056]
+      dtype = 'int8'
+      name = 'Stopbits'
+    [fields.supported.K2060]
+      dtype = 'int16'
+      name = 'Ereigniskatalog (Actioncode)'
+    [fields.supported.K2061]
+      dtype = 'int16'
+      name = 'Prozessparameterkatalog'
+    [fields.supported.K2062]
+      dtype = 'int16'
+      name = 'Nestkatalog'
+    [fields.supported.K2063]
+      dtype = 'int16'
+      name = 'Maschinenkatalog'
+    [fields.supported.K2064]
+      dtype = 'int16'
+      name = "Prüfmittelkatalog"
+    [fields.supported.K2065]
+      dtype = 'int16'
+      name = "Prüferkatalog"
+    [fields.supported.K2066]
+      dtype = 'int16'
+      name = 'Subkatalog K0061'
+    [fields.supported.K2067]
+      dtype = 'int16'
+      name = 'Subkatalog K0062'
+    [fields.supported.K2068]
+      dtype = 'int16'
+      name = 'Subkatalog K0063'
+    [fields.supported.K2071]
+      dtype = 'float'
+      name = 'Additionskonstante'
+    [fields.supported.K2072]
+      dtype = 'float'
+      name = 'Multiplikationsfaktor'
+    [fields.supported.K2073]
+      dtype = 'float'
+      name = "Mass des Einstellmeisters"
+    [fields.supported.K2074]
+      dtype = 'float'
+      name = "aktueller Offset für Einstellmessungen"
+    [fields.supported.K2075]
+      dtype = 'float'
+      name = "Verstärkungsfaktor für Einstellmessungen"
+    [fields.supported.K2076]
+      dtype = 'datetime'
+      name = 'Datum der Einstellmessung'
+    [fields.supported.K2080]
+      dtype = 'object'
+      name = 'Merkmalstatus (aktiviert, deaktiviert)'
+    [fields.supported.K2091]
+      dtype = 'string'
+      name = 'Merkmalindex'
+    [fields.supported.K2092]
+      dtype = 'string'
+      name = 'Merkmalstext'
+    [fields.supported.K2093]
+      dtype = 'string'
+      name = 'Bearbeitungszustand'
+    [fields.supported.K2095]
+      dtype = 'string'
+      name = 'ElementCode'
+    [fields.supported.K2096]
+      dtype = 'string'
+      name = 'ElementIndex'
+    [fields.supported.K2097]
+      dtype = 'string'
+      name = 'ElementText'
+    [fields.supported.K2098]
+      dtype = 'string'
+      name = 'Elementadress'
+    [fields.supported.K2100]
+      dtype = 'float'
+      name = 'Sollwert / Zielwert'
+    [fields.supported.K2101]
+      dtype = 'float'
+      name = "Nennmass"
+    [fields.supported.K2102]
+      dtype = 'float'
+      name = 'Pmax'
+    [fields.supported.K2103]
+      dtype = 'string'
+      name = 'Toleranzklasse'
+    [fields.supported.K2104]
+      dtype = 'int8'
+      name = 'Toleranzwert'
+    [fields.supported.K2105]
+      dtype = 'int16'
+      name = 'Teile i.O. bei Zensorisierung'
+    [fields.supported.K2110]
+      dtype = 'float'
+      name = 'Untere Spezifikationsgrenze'
+    [fields.supported.K2111]
+      dtype = 'float'
+      name = 'Obere Spezifikationsgrenze'
+    [fields.supported.K2112]
+      dtype = 'float'
+      name = "Unteres Abmass"
+    [fields.supported.K2113]
+      dtype = 'float'
+      name = "Oberer Abmass"
+    [fields.supported.K2114]
+      dtype = 'float'
+      name = 'Untere Schrottgrenze'
+    [fields.supported.K2115]
+      dtype = 'float'
+      name = 'Obere Schrottgrenze'
+    [fields.supported.K2116]
+      dtype = 'float'
+      name = 'Untere Akzeptanzgrenze'
+    [fields.supported.K2117]
+      dtype = 'float'
+      name = 'Obere Akzeptanzgrenze'
+    [fields.supported.K2120]
+      dtype = 'int8'
+      name = 'Art der Grenze unten'
+    [fields.supported.K2121]
+      dtype = 'int8'
+      name = 'Art der Grenze oben'
+    [fields.supported.K2130]
+      dtype = 'float'
+      name = "Plausibilitätsgrenze unten"
+    [fields.supported.K2131]
+      dtype = 'float'
+      name = "Plausibilitätsgrenze oben"
+    [fields.supported.K2135]
+      dtype = 'float'
+      name = 'Klassengrenze unten'
+    [fields.supported.K2136]
+      dtype = 'float'
+      name = 'Klassengrenze oben'
+    [fields.supported.K2137]
+      dtype = 'int8'
+      name = 'Anzahl Klassen'
+    [fields.supported.K2138]
+      dtype = 'int8'
+      name = 'Ursprung der Klassierung'
+    [fields.supported.K2139]
+      dtype = 'int8'
+      name = 'Ursprung des Klassierungsmodells'
+    [fields.supported.K2141]
+      dtype = 'int16'
+      name = 'Einheit'
+    [fields.supported.K2142]
+      dtype = 'string'
+      name = 'Einheit Bezeichnung'
+    [fields.supported.K2143]
+      dtype = 'string'
+      name = 'Einheit relativ'
+    [fields.supported.K2144]
+      dtype = 'float'
+      name = 'Additionskonstante relativ'
+    [fields.supported.K2145]
+      dtype = 'float'
+      name = 'Multiplikationsfaktor relativ'
+    [fields.supported.K2146]
+      dtype = 'int8'
+      name = 'Nachkommastellen relativ'
+    [fields.supported.K2151]
+      dtype = 'string'
+      name = 'Toleranz ( als Text)'
+    [fields.supported.K2152]
+      dtype = 'float'
+      name = 'Berechnete Toleranz'
+    [fields.supported.K2160]
+      dtype = 'int32'
+      name = 'Losumfang'
+    [fields.supported.K2161]
+      dtype = 'float'
+      name = 'Kosten Nacharbeit'
+    [fields.supported.K2162]
+      dtype = 'float'
+      name = "Kosten Ausschuss"
+    [fields.supported.K2163]
+      dtype = 'float'
+      name = 'Fehlerkosten'
+    [fields.supported.K2170]
+      dtype = 'float'
+      name = 'Zensorisierungszeitpunkt'
+    [fields.supported.K2171]
+      dtype = 'float'
+      name = 'Extrapolation'
+    [fields.supported.K2172]
+      dtype = 'float'
+      name = 'Erlaubte Ausfallrate'
+    [fields.supported.K2173]
+      dtype = 'float'
+      name = 'Ausfallfreie Zeit'
+    [fields.supported.K2174]
+      dtype = 'int8'
+      name = 'Teile im Feld'
+    [fields.supported.K2175]
+      dtype = 'int8'
+      name = "Bedingungen für Häufigkeitssummen"
+    [fields.supported.K2176]
+      dtype = 'int8'
+      name = 'Laufstreckenverteilung nach Eckel'
+    [fields.supported.K2177]
+      dtype = 'float'
+      name = 'Laufzeit X1'
+    [fields.supported.K2178]
+      dtype = 'float'
+      name = 'Laufzeit X2'
+    [fields.supported.K2180]
+      dtype = 'float'
+      name = 'Weibull Parameter b'
+    [fields.supported.K2181]
+      dtype = 'float'
+      name = 'Weibull Parameter T'
+    [fields.supported.K2182]
+      dtype = 'float'
+      name = 'Summenwahrscheinlichkeit (B(x1))'
+    [fields.supported.K2183]
+      dtype = 'float'
+      name = 'Summenwahrscheinlichkeit (B(x2))'
+    [fields.supported.K2185]
+      dtype = 'int32'
+      name = "Anzahl der Teile im Feld (für Eckel Verfahren)"
+    [fields.supported.K2186]
+      dtype = 'float'
+      name = "Einsatzzeit der Teile im Feld (für Eckel Verfahren)"
+    [fields.supported.K2201]
+      dtype = 'float'
+      name = "Prozessstreuung"
+    [fields.supported.K2202]
+      dtype = 'int8'
+      name = 'Auswertetyp'
+    [fields.supported.K2205]
+      dtype = 'int16'
+      name = 'Anzahl Teile, Anzahl Normale'
+    [fields.supported.K2206]
+      dtype = 'int16'
+      name = 'Anzahl Vorrichtungen'
+    [fields.supported.K2207]
+      dtype = 'int16'
+      name = "Anzahl Prüfintervalle"
+    [fields.supported.K2210]
+      dtype = 'int16'
+      name = 'Normal Katalog'
+    [fields.supported.K2211]
+      dtype = 'string'
+      name = 'Normal Nummer Text]'
+    [fields.supported.K2212]
+      dtype = 'string'
+      name = 'Normal Bezeichnung'
+    [fields.supported.K2213]
+      dtype = 'float'
+      name = 'Normal Istwert'
+    [fields.supported.K2214]
+      dtype = 'float'
+      name = 'Normal Temperatur'
+    [fields.supported.K2215]
+      dtype = 'int16'
+      name = 'Normal Nummer'
+    [fields.supported.K2216]
+      dtype = 'string'
+      name = 'Normal-Seriennummer'
+    [fields.supported.K2217]
+      dtype = 'string'
+      name = 'Normalhersteller'
+    [fields.supported.K2220]
+      dtype = 'int16'
+      name = "Anzahl Prüfer"
+    [fields.supported.K2221]
+      dtype = 'int16'
+      name = 'Anzahl Messungen'
+    [fields.supported.K2222]
+      dtype = 'int16'
+      name = 'Anzahl Referenzmessungen'
+    [fields.supported.K2225]
+      dtype = 'float'
+      name = 'Ermittelter Cg Wert'
+    [fields.supported.K2226]
+      dtype = 'float'
+      name = 'Ermittelter Cgk Wert'
+    [fields.supported.K2227]
+      dtype = 'float'
+      name = 'Abweichung GC Typ3 GC Typ1'
+    [fields.supported.K2228]
+      dtype = 'float'
+      name = "Sg Typ 1 - Stabilität"
+    [fields.supported.K2243]
+      dtype = 'string'
+      name = 'Zeichnung Dateiname'
+    [fields.supported.K2244]
+      dtype = 'int16'
+      name = 'Zeichnung Referenzpunkt X'
+    [fields.supported.K2245]
+      dtype = 'int16'
+      name = 'Zeichnung Referenzpunkt Y'
+    [fields.supported.K2246]
+      dtype = 'int16'
+      name = 'Zeichnung Referenzpunkt Z'
+    [fields.supported.K2261]
+      dtype = 'string'
+      name = 'Referenzteil-Nummer'
+    [fields.supported.K2262]
+      dtype = 'string'
+      name = 'Referenzteil-Bezeichnung'
+    [fields.supported.K2263]
+      dtype = 'float'
+      name = 'Referenzteil-Istwert'
+    [fields.supported.K2264]
+      dtype = 'float'
+      name = 'Referenzteil-Temperatur'
+    [fields.supported.K2265]
+      dtype = 'int8'
+      name = 'Referenzteil-Nummer (num)'
+    [fields.supported.K2266]
+      dtype = 'string'
+      name = 'Referenzteil-Seriennummer'
+    [fields.supported.K2281]
+      dtype = 'string'
+      name = 'Einstellteil-Nummer mitte'
+    [fields.supported.K2282]
+      dtype = 'string'
+      name = 'Einstellteil-Bezeichnung mitte'
+    [fields.supported.K2283]
+      dtype = 'float'
+      name = 'Einstellteil-Istwert mitte'
+    [fields.supported.K2284]
+      dtype = 'float'
+      name = 'Einstellteil-Temperatur mitte'
+    [fields.supported.K2285]
+      dtype = 'int8'
+      name = 'Einstellteil-Nummer (num) mitte'
+    [fields.supported.K2286]
+      dtype = 'string'
+      name = 'Einstellteil-Seriennummer mitte'
+    [fields.supported.K2301]
+      dtype = 'string'
+      name = 'Maschine Nummer Text'
+    [fields.supported.K2302]
+      dtype = 'string'
+      name = 'Maschine Bezeichnung'
+    [fields.supported.K2303]
+      dtype = 'string'
+      name = 'Abteilung / Kostenstelle'
+    [fields.supported.K2304]
+      dtype = 'string'
+      name = 'Standort'
+    [fields.supported.K2305]
+      dtype = 'int16'
+      name = 'Maschine Nummer'
+    [fields.supported.K2306]
+      dtype = 'string'
+      name = 'Bereich im  Werk'
+    [fields.supported.K2307]
+      dtype = 'string'
+      name = 'PTM-Nummer'
+    [fields.supported.K2311]
+      dtype = 'string'
+      name = 'Fertigungsart Text (Operation)'
+    [fields.supported.K2312]
+      dtype = 'string'
+      name = 'Fertigungsart Bezeichnung'
+    [fields.supported.K2313]
+      dtype = 'int16'
+      name = 'Fertigungsart Nummer'
+    [fields.supported.K2320]
+      dtype = 'string'
+      name = 'Auftrag Nummer '
+    [fields.supported.K2321]
+      dtype = 'string'
+      name = 'Auftraggeber Nummer Text'
+    [fields.supported.K2322]
+      dtype = 'string'
+      name = 'Auftraggeber Name'
+    [fields.supported.K2323]
+      dtype = 'int16'
+      name = 'Auftraggeber Nummer'
+    [fields.supported.K2331]
+      dtype = 'string'
+      name = "Werkstück Nummer Text"
+    [fields.supported.K2332]
+      dtype = 'string'
+      name = "Werkstück Bezeichnung"
+    [fields.supported.K2333]
+      dtype = 'int16'
+      name = "Werkstück Nummer"
+    [fields.supported.K2341]
+      dtype = 'string'
+      name = "Prüfplannummer Text"
+    [fields.supported.K2342]
+      dtype = 'string'
+      name = "Prüfplanname"
+    [fields.supported.K2343]
+      dtype = 'datetime'
+      name = "Prüfplan Erstellungsdatum"
+    [fields.supported.K2344]
+      dtype = 'string'
+      name = "Prüfplan Ersteller"
+    [fields.supported.K2401]
+      dtype = 'string'
+      name = "Prüfmittel Nummer Text"
+    [fields.supported.K2402]
+      dtype = 'string'
+      name = "Prüfmittel Bezeichnung"
+    [fields.supported.K2403]
+      dtype = 'string'
+      name = "Prüfmittel Gruppe"
+    [fields.supported.K2404]
+      dtype = 'float'
+      name = "Prüfmittel Auflösung"
+    [fields.supported.K2405]
+      dtype = 'int16'
+      name = "Prüfmittel Nummer"
+    [fields.supported.K2406]
+      dtype = 'string'
+      name = "Prüfmittelhersteller"
+    [fields.supported.K2407]
+      dtype = 'string'
+      name = "SPC-Gerät Nummer"
+    [fields.supported.K2408]
+      dtype = 'string'
+      name = "SPC-Gerät Bezeichnung"
+    [fields.supported.K2409]
+      dtype = 'string'
+      name = "SPC-Gerät Typ"
+    [fields.supported.K2410]
+      dtype = 'string'
+      name = "Prüfort"
+    [fields.supported.K2411]
+      dtype = 'datetime'
+      name = "Prüfbeginn"
+    [fields.supported.K2412]
+      dtype = 'datetime'
+      name = "Prüfende"
+    [fields.supported.K2413]
+      dtype = 'string'
+      name = "Prüfmittelgrafik"
+    [fields.supported.K2415]
+      dtype = 'string'
+      name = "Prüfmittel-Seriennummer"
+    [fields.supported.K2416]
+      dtype = 'string'
+      name = "Anzeigegerät"
+    [fields.supported.K2421]
+      dtype = 'string'
+      name = "Prüfer Nummer Text"
+    [fields.supported.K2422]
+      dtype = 'string'
+      name = "Prüfer Name"
+    [fields.supported.K2423]
+      dtype = 'int16'
+      name = "Prüfer Nummer"
+    [fields.supported.K2430]
+      dtype = 'int16'
+      name = 'Bemusterungsart'
+    [fields.supported.K2432]
+      dtype = 'int16'
+      name = 'Einzelwertausgabe'
+    [fields.supported.K2434]
+      dtype = 'int16'
+      name = "Prozessfähigkeitsnachweis"
+    [fields.supported.K2436]
+      dtype = 'string'
+      name = 'Test Frequency'
+    [fields.supported.K2438]
+      dtype = 'string'
+      name = 'Quantity Tested'
+    [fields.supported.K2440]
+      dtype = 'string'
+      name = 'ZSB-Komponente'
+    [fields.supported.K2442]
+      dtype = 'string'
+      name = 'Masse der ZSB-Komponente'
+    [fields.supported.K2444]
+      dtype = 'string'
+      name = 'Material der ZSB-Komponente'
+    [fields.supported.K2446]
+      dtype = 'string'
+      name = 'Herstellerbezogene Produktbezeichnung'
+    [fields.supported.K2448]
+      dtype = 'string'
+      name = 'Hersteller der ZSB-Komponente'
+    [fields.supported.K2501]
+      dtype = 'int8'
+      name = "Bemassungsattribut"
+    [fields.supported.K2502]
+      dtype = 'int8'
+      name = 'Darstellungsformat Toleranz'
+    [fields.supported.K2503]
+      dtype = 'int8'
+      name = "Bemassungstyp"
+    [fields.supported.K2504]
+      dtype = 'int8'
+      name = "Zeichnungsänderung Status"
+    [fields.supported.K2505]
+      dtype = 'string'
+      name = 'Ansichtsname'
+    [fields.supported.K2506]
+      dtype = 'int8'
+      name = 'Blattnummer'
+    [fields.supported.K2507]
+      dtype = 'string'
+      name = 'Feldbuchstabe Zeichnung'
+    [fields.supported.K2508]
+      dtype = 'int8'
+      name = 'Feldzahl Zeichnung'
+    [fields.supported.K2509]
+      dtype = 'string'
+      name = 'Blattbezeichnung'
+    [fields.supported.K2511]
+      dtype = 'string'
+      name = 'Bezug 1'
+    [fields.supported.K2512]
+      dtype = 'string'
+      name = 'Bezug 2'
+    [fields.supported.K2513]
+      dtype = 'string'
+      name = 'Bezug 3'
+    [fields.supported.K2514]
+      dtype = 'string'
+      name = 'Bezug 4'
+    [fields.supported.K2515]
+      dtype = 'string'
+      name = 'Bezug 5'
+    [fields.supported.K2516]
+      dtype = 'string'
+      name = 'Bezug 6'
+    [fields.supported.K2517]
+      dtype = 'string'
+      name = 'Bezug 7'
+    [fields.supported.K2518]
+      dtype = 'string'
+      name = 'Bezug 8'
+    [fields.supported.K2519]
+      dtype = 'string'
+      name = 'Bezug 9'
+    [fields.supported.K2520]
+      dtype = 'string'
+      name = 'Bezugssystem'
+    [fields.supported.K2521]
+      dtype = 'float'
+      name = 'Bezug X-Richtung'
+    [fields.supported.K2522]
+      dtype = 'float'
+      name = 'Bezug Y-Richtung'
+    [fields.supported.K2523]
+      dtype = 'float'
+      name = 'Bezug Z-Richtung'
+    [fields.supported.K2524]
+      dtype = 'string'
+      name = 'CAD interner Bezug'
+    [fields.supported.K2525]
+      dtype = 'string'
+      name = 'RotationsMatrix'
+    [fields.supported.K2526]
+      dtype = 'string'
+      name = 'CAD-Ausschnitt'
+    [fields.supported.K2630]
+      dtype = 'float'
+      name = 'Kalibrierunsicherheit'
+    [fields.supported.K2646]
+      dtype = 'int32'
+      name = 'Komponentenart'
+    [fields.supported.K2654]
+      dtype = 'int8'
+      name = 'VDA 5 Version'
+    [fields.supported.K2800]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 1'
+    [fields.supported.K2801]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 1'
+    [fields.supported.K2802]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 1'
+    [fields.supported.K2810]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 2'
+    [fields.supported.K2811]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 2'
+    [fields.supported.K2812]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 2'
+    [fields.supported.K2820]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 3'
+    [fields.supported.K2821]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 3'
+    [fields.supported.K2822]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 3'
+    [fields.supported.K2830]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 4'
+    [fields.supported.K2831]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 4'
+    [fields.supported.K2832]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 4'
+    [fields.supported.K2840]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 5'
+    [fields.supported.K2841]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 5'
+    [fields.supported.K2842]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 5'
+    [fields.supported.K2850]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 6'
+    [fields.supported.K2851]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 6'
+    [fields.supported.K2852]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 6'
+    [fields.supported.K2860]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 7'
+    [fields.supported.K2861]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 7'
+    [fields.supported.K2862]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 7'
+    [fields.supported.K2870]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 8'
+    [fields.supported.K2871]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 8'
+    [fields.supported.K2872]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 8'
+    [fields.supported.K2880]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 9'
+    [fields.supported.K2881]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 9'
+    [fields.supported.K2882]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 9'
+    [fields.supported.K2890]
+      dtype = 'string'
+      name = 'Benutzer Feldbezeichnung 10'
+    [fields.supported.K2891]
+      dtype = 'string'
+      name = 'Benutzer Feldtyp 10'
+    [fields.supported.K2892]
+      dtype = 'string'
+      name = 'Benutzer Feldinhalt 10'
+    [fields.supported.K2900]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.supported.K2901]
+      dtype = 'string'
+      name = "Prüfbedingungen"
+    [fields.supported.K2997]
+      dtype = 'object'
+      name = 'Merkmal GUID'
+    [fields.supported.K2998]
+      dtype = 'string'
+      name = 'interne Konfiguration'
+    [fields.supported.K2999]
+      dtype = 'int32'
+      name = 'interne qs-STAT Konfiguration'
+    [fields.supported.K3001]
+      dtype = 'string'
+      name = "Prüfbericht Nummer Lieferant"
+    [fields.supported.K3002]
+      dtype = 'string'
+      name = "Prüfbericht Bezeichnung Lieferant"
+    [fields.supported.K3003]
+      dtype = 'string'
+      name = 'Kenn-Nummer Lieferant'
+    [fields.supported.K3004]
+      dtype = 'string'
+      name = "Prüfbericht Version Lieferant"
+    [fields.supported.K3005]
+      dtype = 'string'
+      name = "Prüfbericht Ausfertigung (Lieferant)"
+    [fields.supported.K3006]
+      dtype = 'string'
+      name = 'Zeichen Lieferant'
+    [fields.supported.K3010]
+      dtype = 'int16'
+      name = 'Lieferant Nummer'
+    [fields.supported.K3011]
+      dtype = 'string'
+      name = 'Lieferanten-Nummer'
+    [fields.supported.K3020]
+      dtype = 'int16'
+      name = 'Erstbemusterung'
+    [fields.supported.K3021]
+      dtype = 'int16'
+      name = 'Nachbemusterung'
+    [fields.supported.K3022]
+      dtype = 'int16'
+      name = 'Sonstige Muster'
+    [fields.supported.K3023]
+      dtype = 'string'
+      name = 'Sonstige Muster Text'
+    [fields.supported.K3025]
+      dtype = 'string'
+      name = 'Wiederholte Vorstellung Nummer'
+    [fields.supported.K3030]
+      dtype = 'string'
+      name = "Anlagen (Prüfungsarten)"
+    [fields.supported.K3031]
+      dtype = 'string'
+      name = "Andere Anlagen (Prüfungsarten)"
+    [fields.supported.K3035]
+      dtype = 'string'
+      name = 'Bemusterungsgrund'
+    [fields.supported.K3036]
+      dtype = 'string'
+      name = 'other - please specify'
+    [fields.supported.K3037]
+      dtype = 'int16'
+      name = 'Requested submission level'
+    [fields.supported.K3040]
+      dtype = 'int16'
+      name = "Prozessfähigkeit"
+    [fields.supported.K3050]
+      dtype = 'string'
+      name = 'Sachnummer Lieferant'
+    [fields.supported.K3052]
+      dtype = 'string'
+      name = 'Benennung Lieferant'
+    [fields.supported.K3055]
+      dtype = 'string'
+      name = 'Zeichnungsnummer Lieferant'
+    [fields.supported.K3056]
+      dtype = 'string'
+      name = 'Stand Lieferant'
+    [fields.supported.K3057]
+      dtype = 'datetime'
+      name = 'Datum Lieferant'
+    [fields.supported.K3058]
+      dtype = 'string'
+      name = "Änderungsnummer Lieferant"
+    [fields.supported.K3070]
+      dtype = 'string'
+      name = 'Bestellnummer Lieferant'
+    [fields.supported.K3071]
+      dtype = 'string'
+      name = 'Abrufnummer Lieferant'
+    [fields.supported.K3077]
+      dtype = 'datetime'
+      name = 'Bestelldatum Lieferant'
+    [fields.supported.K3078]
+      dtype = 'datetime'
+      name = 'Abrufdatum Lieferant'
+    [fields.supported.K3080]
+      dtype = 'string'
+      name = 'Lieferschein-Nummer Lieferant'
+    [fields.supported.K3087]
+      dtype = 'datetime'
+      name = 'Lieferschein-Datum Lieferant'
+    [fields.supported.K3100]
+      dtype = 'string'
+      name = 'Artikelnummer'
+    [fields.supported.K3101]
+      dtype = 'string'
+      name = 'Liefermenge'
+    [fields.supported.K3102]
+      dtype = 'string'
+      name = 'Liefereinheit'
+    [fields.supported.K3103]
+      dtype = 'string'
+      name = 'Anzahl Muster'
+    [fields.supported.K3105]
+      dtype = 'string'
+      name = 'Chargennummer'
+    [fields.supported.K3106]
+      dtype = 'string'
+      name = 'Nestnummer'
+    [fields.supported.K3107]
+      dtype = 'string'
+      name = 'Werkzeugnummer'
+    [fields.supported.K3108]
+      dtype = 'int16'
+      name = 'Restricted, Substances'
+    [fields.supported.K3109]
+      dtype = 'int16'
+      name = 'Plastic Parts'
+    [fields.supported.K3110]
+      dtype = 'string'
+      name = 'Mustergewicht (Lieferant)'
+    [fields.supported.K3112]
+      dtype = 'string'
+      name = "durchgeführt"
+    [fields.supported.K3113]
+      dtype = 'string'
+      name = 'Application'
+    [fields.supported.K3115]
+      dtype = 'int16'
+      name = 'Dokumentationspflicht'
+    [fields.supported.K3117]
+      dtype = 'string'
+      name = 'Checking Aid No.'
+    [fields.supported.K3118]
+      dtype = 'string'
+      name = 'Change Level (Checking Aid No.)'
+    [fields.supported.K3119]
+      dtype = 'datetime'
+      name = 'Date (Checking Aid No.)'
+    [fields.supported.K3150]
+      dtype = 'int16'
+      name = 'Ersteller (Lieferant)'
+    [fields.supported.K3160]
+      dtype = 'string'
+      name = 'Unterschrift Ersteller'
+    [fields.supported.K3167]
+      dtype = 'datetime'
+      name = 'Datum Erstellersignatur'
+    [fields.supported.K3180]
+      dtype = 'object'
+      name = 'Spezifikationsunterlagen'
+    [fields.supported.K3186]
+      dtype = 'string'
+      name = 'Production rate tkmebase (hours)'
+    [fields.supported.K3187]
+      dtype = 'string'
+      name = 'Production rate / 8 hours'
+    [fields.supported.K3188]
+      dtype = 'string'
+      name = 'Mold / Cav. / Prod.'
+    [fields.supported.K3190]
+      dtype = 'object'
+      name = 'Bemerkung Lieferant'
+    [fields.supported.K3200]
+      dtype = 'string'
+      name = 'Fertigungsauftragsnummer'
+    [fields.supported.K3210]
+      dtype = 'string'
+      name = "Prüfauftragsnummer"
+    [fields.supported.K3281]
+      dtype = 'object'
+      name = "Bemerkung Funktionsprüfung"
+    [fields.supported.K3282]
+      dtype = 'object'
+      name = "Bemerkung Massprüfung"
+    [fields.supported.K3283]
+      dtype = 'object'
+      name = "Bemerkung Werkstoffprüfung"
+    [fields.supported.K3284]
+      dtype = 'object'
+      name = "Bemerkung Zuverlässigkeitsprüfung"
+    [fields.supported.K3285]
+      dtype = 'object'
+      name = "Bemerkung Prozessfähigkeitsnachweis"
+    [fields.supported.K3293]
+      dtype = 'object'
+      name = 'Bemerkung Erscheinungsbild'
+    [fields.supported.K3296]
+      dtype = 'object'
+      name = 'Bemerkung Inhaltsstoffe'
+    [fields.supported.K3298]
+      dtype = 'object'
+      name = "Bemerkung Attributivprüfung"
+    [fields.supported.K3301]
+      dtype = 'string'
+      name = "Prüfbericht Nummer Abnehmer"
+    [fields.supported.K3302]
+      dtype = 'string'
+      name = "Prüfbericht Bezeichnung, Abnehmer"
+    [fields.supported.K3303]
+      dtype = 'string'
+      name = 'Kenn-Nummer Abnehmer'
+    [fields.supported.K3304]
+      dtype = 'string'
+      name = "Prüfbericht Version Abnehmer"
+    [fields.supported.K3306]
+      dtype = 'string'
+      name = 'Zeichen Abnehmer'
+    [fields.supported.K3310]
+      dtype = 'int16'
+      name = 'Kundennummer'
+    [fields.supported.K3350]
+      dtype = 'string'
+      name = 'Sachnummer Abnehmer'
+    [fields.supported.K3352]
+      dtype = 'string'
+      name = 'Benennung Abnehmer'
+    [fields.supported.K3355]
+      dtype = 'string'
+      name = 'Zeichnungsnummer Abnehmer'
+    [fields.supported.K3356]
+      dtype = 'string'
+      name = 'Stand Abnehmer'
+    [fields.supported.K3357]
+      dtype = 'datetime'
+      name = 'Datum Abnahme'
+    [fields.supported.K3358]
+      dtype = 'string'
+      name = "Änderungsnummer Abnehmer"
+    [fields.supported.K3372]
+      dtype = 'string'
+      name = 'Wareneingangsnummer'
+    [fields.supported.K3379]
+      dtype = 'datetime'
+      name = 'Wareneingangsdatum'
+    [fields.supported.K3380]
+      dtype = 'string'
+      name = 'Lieferscheinnummer Abnehmer'
+    [fields.supported.K3387]
+      dtype = 'datetime'
+      name = 'Lieferscheindatum Abnehmer'
+    [fields.supported.K3390]
+      dtype = 'string'
+      name = 'Abladestelle'
+    [fields.supported.K3404]
+      dtype = 'string'
+      name = 'Abnahmeverfahren'
+    [fields.supported.K3410]
+      dtype = 'string'
+      name = 'Mustergewicht Abnehmer'
+    [fields.supported.K3420]
+      dtype = 'int16'
+      name = 'Gesamtentscheid'
+    [fields.supported.K3421]
+      dtype = 'int16'
+      name = "Entscheidung Funktionsprüfung"
+    [fields.supported.K3422]
+      dtype = 'int16'
+      name = "Entscheidung Massprüfung"
+    [fields.supported.K3423]
+      dtype = 'int16'
+      name = "Entscheidung Werkstoffprüfung"
+    [fields.supported.K3424]
+      dtype = 'int16'
+      name = "Entscheidung Zuverlässigkeit"
+    [fields.supported.K3425]
+      dtype = 'int16'
+      name = "Entscheidung Prozessfähigkeit"
+    [fields.supported.K3433]
+      dtype = 'int16'
+      name = "Entscheidung Sichtprüfung"
+    [fields.supported.K3436]
+      dtype = 'int16'
+      name = 'Entscheidung Inhaltsstoffe'
+    [fields.supported.K3438]
+      dtype = 'int16'
+      name = "Entscheidung Attributivprüfung"
+    [fields.supported.K3439]
+      dtype = 'string'
+      name = 'andere Entscheidung'
+    [fields.supported.K3440]
+      dtype = 'string'
+      name = 'The Results for'
+    [fields.supported.K3442]
+      dtype = 'int16'
+      name = 'meet all drawing and specif. requmts.'
+    [fields.supported.K3445]
+      dtype = 'string'
+      name = 'Abweich-Genehmigungsnummer'
+    [fields.supported.K3447]
+      dtype = 'datetime'
+      name = 'Date (Additional Engineering Changes)'
+    [fields.supported.K3450]
+      dtype = 'string'
+      name = "Prüfbericht, Ersteller (Abnehmer)"
+    [fields.supported.K3451]
+      dtype = 'string'
+      name = 'Name Abnehmer'
+    [fields.supported.K3460]
+      dtype = 'string'
+      name = 'Unterschrift Abnehmer'
+    [fields.supported.K3467]
+      dtype = 'datetime'
+      name = 'Signaturdatum Abnehmer'
+    [fields.supported.K3470]
+      dtype = 'int16'
+      name = "Einkäufer"
+    [fields.supported.K3481]
+      dtype = 'object'
+      name = 'Auflagen'
+    [fields.supported.K3490]
+      dtype = 'object'
+      name = 'Bemerkung Abnehmer'
+    [fields.supported.K3560]
+      dtype = 'string'
+      name = 'Name of inspection facility'
+    [fields.supported.K3561]
+      dtype = 'string'
+      name = 'Functional inspection facility'
+    [fields.supported.K3562]
+      dtype = 'string'
+      name = 'Dimensional inspection facility'
+    [fields.supported.K3563]
+      dtype = 'string'
+      name = 'Material inspection facility'
+    [fields.supported.K3564]
+      dtype = 'string'
+      name = "(frei für]) Zuverlässigkeit,, inspection facility"
+    [fields.supported.K3565]
+      dtype = 'string'
+      name = "(frei für]) Sichtprüfung, inspection facility"
+    [fields.supported.K3566]
+      dtype = 'string'
+      name = "(frei für]) Attributivprüfung, inspection facility"
+    [fields.supported.K3569]
+      dtype = 'string'
+      name = "(frei für]) Sonstige Prüfung, inspection facility"
+    [fields.supported.K3581]
+      dtype = 'object'
+      name = "Bemerkung Funktionsprüfung (Abnehmer)"
+    [fields.supported.K3582]
+      dtype = 'object'
+      name = "Bemerkung Massprüfung (Abnehmer)"
+    [fields.supported.K3583]
+      dtype = 'object'
+      name = "Bemerkung Werkstoffprüfung (Abnehmer)"
+    [fields.supported.K3600]
+      dtype = 'int16'
+      name = "Prüfbericht Art"
+    [fields.supported.K3601]
+      dtype = 'string'
+      name = "Prüfbericht Name/Beschreibung"
+    [fields.supported.K3602]
+      dtype = 'string'
+      name = 'Eingabe-Maskendatei'
+    [fields.supported.K3610]
+      dtype = 'string'
+      name = "Änderer"
+    [fields.supported.K3617]
+      dtype = 'datetime'
+      name = "Änderungsdatum"
+    [fields.supported.K3650]
+      dtype = 'int8'
+      name = "Bearbeitungszustand des Erstmusterprüfberichts"
+    [fields.supported.K3701]
+      dtype = 'int16'
+      name = 'Verteiler 1'
+    [fields.supported.K3702]
+      dtype = 'int16'
+      name = 'Verteiler 2'
+    [fields.supported.K3703]
+      dtype = 'int16'
+      name = 'Verteiler 3'
+    [fields.supported.K3704]
+      dtype = 'int16'
+      name = 'Verteiler 4'
+    [fields.supported.K3705]
+      dtype = 'int16'
+      name = 'Verteiler 5'
+    [fields.supported.K3706]
+      dtype = 'int16'
+      name = 'Verteiler 6'
+    [fields.supported.K3707]
+      dtype = 'int16'
+      name = 'Verteiler 7'
+    [fields.supported.K3708]
+      dtype = 'int16'
+      name = 'Verteiler 8'
+    [fields.supported.K3709]
+      dtype = 'int16'
+      name = 'Verteiler 9'
+    [fields.supported.K3710]
+      dtype = 'int16'
+      name = 'Verteiler 10'
+    [fields.supported.K3711]
+      dtype = 'int16'
+      name = 'Verteiler 11'
+    [fields.supported.K3712]
+      dtype = 'int16'
+      name = 'Verteiler 12'
+    [fields.supported.K3713]
+      dtype = 'int16'
+      name = 'Verteiler 13'
+    [fields.supported.K3714]
+      dtype = 'int16'
+      name = 'Verteiler 14'
+    [fields.supported.K3750]
+      dtype = 'int16'
+      name = "Gefährliche Stoffe nach ChemG/GefStoffV?"
+    [fields.supported.K3752]
+      dtype = 'int16'
+      name = "Entstehung von Gefahrstoffen bei sachgemässem Umgang?"
+    [fields.supported.K3754]
+      dtype = 'int16'
+      name = 'Gefahrgut nach Verkehrsrecht'
+    [fields.supported.K3756]
+      dtype = 'int16'
+      name = "Wassergefährdende Stoffe nach Wasserrecht"
+    [fields.supported.K3757]
+      dtype = 'string'
+      name = "Wassergefährdungsklasse"
+    [fields.supported.K3758]
+      dtype = 'string'
+      name = "Menge wassergefährdender Stoffe"
+    [fields.supported.K3760]
+      dtype = 'int16'
+      name = 'Bauteil mit Bioziden'
+    [fields.supported.K3761]
+      dtype = 'string'
+      name = 'Gehalt an Bioziden'
+    [fields.supported.K3763]
+      dtype = 'int16'
+      name = 'Entsteht bei Entsorgung ein Abfall mit EAK-Code?'
+    [fields.supported.K3764]
+      dtype = 'string'
+      name = 'EAK-Code'
+    [fields.supported.K3780]
+      dtype = 'string'
+      name = 'Zeichnungsname 2'
+    [fields.supported.K3781]
+      dtype = 'string'
+      name = 'Zeichnungsname 3'
+    [fields.supported.K3782]
+      dtype = 'string'
+      name = 'Zeichnungsname 4'
+    [fields.supported.K5001]
+      dtype = 'string'
+      name = 'Gruppennummer (Text)'
+    [fields.supported.K5002]
+      dtype = 'string'
+      name = 'Gruppenbezeichnung'
+    [fields.supported.K5003]
+      dtype = 'string'
+      name = 'Gruppenkurzbezeichnung'
+    [fields.supported.K5007]
+      dtype = 'string'
+      name = 'Gruppennummer-Kurzbezeichnung'
+    [fields.supported.K5045]
+      dtype = 'string'
+      name = 'Skizze (Dateiname)'
+    [fields.supported.K5090]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.supported.K5098]
+      dtype = 'string'
+    name = 'interne qs-STAT Konfiguration'
+    [fields.supported.K5101]
+      dtype = 'int16'
+      name = 'Teil als Bestandteil einer Gruppe'
+    [fields.supported.K5102]
+      dtype = 'int16'
+      name = 'Merkmal als Bestandteil einer Gruppe'
+    [fields.supported.K5103]
+      dtype = 'int16'
+      name = 'Gruppe als Bestandteil einer Gruppe'
+    [fields.supported.K5111]
+      dtype = 'int16'
+      name = 'Teilegruppe'
+    [fields.supported.K5112]
+      dtype = 'int16'
+    name = 'Merkmalsgruppe'
+    [fields.supported.K5113]
+      dtype = 'int16'
+      name = 'Gruppenelement'
+    [fields.supported.K8006]
+      dtype = 'float'
+      name = 'Untere Alarmgrenze (Lage)'
+    [fields.supported.K8007]
+      dtype = 'float'
+      name = 'Obere Alarmgrenze (Lage)'
+    [fields.supported.K8010]
+      dtype = 'object'
+      name = 'Kartenart und Zusatzattribute (Lage)'
+    [fields.supported.K8011]
+      dtype = 'float'
+      name = 'Mittellage (Lage)'
+    [fields.supported.K8012]
+      dtype = 'float'
+      name = 'untere Eingriffsgrenze UEG (Lage)'
+    [fields.supported.K8013]
+      dtype = 'float'
+      name = 'obere Eingriffsgrenze  OEG (Lage)'
+    [fields.supported.K8014]
+      dtype = 'float'
+      name = 'untere Warngrenze UWG (Lage)'
+    [fields.supported.K8015]
+      dtype = 'float'
+      name = 'obere Warngrenze OWG (Lage)'
+    [fields.supported.K8106]
+      dtype = 'float'
+      name = 'Untere Alarmgrenze (Streuung)'
+    [fields.supported.K8107]
+      dtype = 'float'
+      name = 'Obere.Alarmgrenze (Streuung)'
+    [fields.supported.K8110]
+      dtype = 'object'
+      name = 'Kartenart und Zusatzattribute (Streuung)'
+    [fields.supported.K8111]
+      dtype = 'float'
+      name = 'Mittellage (Streuung)'
+    [fields.supported.K8112]
+      dtype = 'float'
+      name = 'untere Eingriffsgrenze UEG  (Streuung)'
+    [fields.supported.K8113]
+      dtype = 'float'
+      name = 'obere Eingriffsgrenze  OEG (Streuung)'
+    [fields.supported.K8114]
+      dtype = 'float'
+      name = 'untere Warngrenze UWG (Streuung)'
+    [fields.supported.K8115]
+      dtype = 'float'
+      name = 'obere Warngrenze OWG (Streuung)'
+    [fields.supported.K8500]
+      dtype = 'int16'
+      name = 'Stichprobe Umfang (gesamt)'
+    [fields.supported.K8501]
+      dtype = 'int8'
+      name = 'Stichprobe Art'
+    [fields.supported.K8502]
+      dtype = 'string'
+      name = 'Stichprobe Frequenz'
+    [fields.supported.K8503]
+      dtype = 'int8'
+      name = 'Stichprobenart attributiv'
+    [fields.supported.K8504]
+      dtype = 'int16'
+      name = "Stichprobenhäufigkeit"
+    [fields.supported.K8505]
+      dtype = 'int16'
+      name = 'Anzahl Teile (attr.)'
+    [fields.supported.K8520]
+      dtype = 'float'
+      name = 'Geforderter Cp-WertEignungsgrenzwert in %'
+    [fields.supported.K8521]
+      dtype = 'float'
+      name = 'Geforderter Cpk-Wert'
+    [fields.supported.K8522]
+      dtype = 'float'
+      name = 'Gefixter Cp-Wert'
+    [fields.supported.K8523]
+      dtype = 'float'
+      name = 'Gefixter Cpk-Wert'
+    [fields.supported.K8524]
+      dtype = 'float'
+      name = 'Geforderter CAM-Wert'
+    [fields.supported.K8525]
+      dtype = 'float'
+      name = "Geforderter nicht kritischer Fähigkeitsindex"
+    [fields.supported.K8530]
+      dtype = 'int16'
+      name = "Prozessstabilität"
+    [fields.supported.K8531]
+      dtype = 'float'
+      name = "Eingegebene Prozessfähigkeit (Cp)"
+    [fields.supported.K8532]
+      dtype = 'float'
+      name = "Eingegebene Prozessfähigkeit (Cpk)"
+    [fields.supported.K8540]
+      dtype = 'int16'
+      name = 'Bewertung'
+    [fields.supported.K8600]
+      dtype = 'int8'
+      name = 'Korrekturstrategie'
+    [fields.supported.K8610]
+      dtype = 'float'
+      name = 'untere Korrekturgrenze'
+    [fields.supported.K8611]
+      dtype = 'float'
+      name = 'obere Korrekturgrenze'
+    [fields.supported.K8612]
+      dtype = 'int8'
+      name = "Puffergrösse"
+    [fields.supported.K8613]
+      dtype = 'float'
+      name = 'Korrekturzielwert'
+
+
+  # Catalog k-fields according to the documentation
+  [fields.catalog]
+    [fields.catalog.K4000]
+      dtype = 'string'
+      name = 'Kundenkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4001]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4002]
+      dtype = 'string'
+      name = "Kunde_Nummer"
+    [fields.catalog.K4003]
+      dtype = 'string'
+      name = "Kunde_Name 1"
+    [fields.catalog.K4004]
+      dtype = 'string'
+      name = "Kunde_Name 2"
+    [fields.catalog.K4005]
+      dtype = 'string'
+      name = "Kunde_Abteilung"
+    [fields.catalog.K4006]
+      dtype = 'string'
+      name = "Kunde_Werk"
+    [fields.catalog.K4007]
+      dtype = 'string'
+      name = "Kunde_Strasse-Postfach"
+    [fields.catalog.K4008]
+      dtype = 'string'
+      name = "Kunde_Postleitzahl-Ort"
+    [fields.catalog.K4009]
+      dtype = 'string'
+      name = "Kunde_Land"
+    [fields.catalog.K4010]
+      dtype = 'string'
+      name = 'Herstellerkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4011]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4012]
+      dtype = 'string'
+      name = "Hersteller_Nummer"
+    [fields.catalog.K4013]
+      dtype = 'string'
+      name = "Hersteller_Name 1"
+    [fields.catalog.K4014]
+      dtype = 'string'
+      name = "Hersteller_Name 2"
+    [fields.catalog.K4015]
+      dtype = 'string'
+      name = "Hersteller_Abteilung"
+    [fields.catalog.K4016]
+      dtype = 'string'
+      name = "Hersteller_Werk"
+    [fields.catalog.K4017]
+      dtype = 'string'
+      name = "Hersteller_Strasse-Postfach"
+    [fields.catalog.K4018]
+      dtype = 'string'
+      name = "Hersteller_Postleizahl-Ort"
+    [fields.catalog.K4019]
+      dtype = 'string'
+      name = "Hersteller_Land"
+    [fields.catalog.K4020]
+      dtype = 'string'
+      name = 'Lieferantenkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4021]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4022]
+      dtype = 'string'
+      name = "Lieferant_Nummer"
+    [fields.catalog.K4023]
+      dtype = 'string'
+      name = "Lieferant_Name 1"
+    [fields.catalog.K4024]
+      dtype = 'string'
+      name = "Lieferant_Name 2"
+    [fields.catalog.K4025]
+      dtype = 'string'
+      name = "Lieferant_Abteilung"
+    [fields.catalog.K4026]
+      dtype = 'string'
+      name = "Lieferant_Werk"
+    [fields.catalog.K4027]
+      dtype = 'string'
+      name = "Lieferant_Strasse-Postfach"
+    [fields.catalog.K4028]
+      dtype = 'string'
+      name = "Lieferant_Postleitzahl-Ort"
+    [fields.catalog.K4029]
+      dtype = 'string'
+      name = "Lieferant_Land"
+    [fields.catalog.K4030]
+      dtype = 'string'
+      name = 'Auftragskatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4031]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4032]
+      dtype = 'string'
+      name = "Auftrag_Nummer"
+    [fields.catalog.K4033]
+      dtype = 'string'
+      name = "Auftrag_Bezeichnung"
+    [fields.catalog.K4040]
+      dtype = 'string'
+      name = 'Werkstoffkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4041]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4042]
+      dtype = 'string'
+      name = "Werkstoff_Nummer"
+    [fields.catalog.K4043]
+      dtype = 'string'
+      name = "Werkstoff_Bezeichnung"
+    [fields.catalog.K4050]
+      dtype = 'string'
+      name = 'Zeichnungskatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4051]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4052]
+      dtype = 'string'
+      name = "Zeichnung_Nummer"
+    [fields.catalog.K4053]
+      dtype = 'string'
+      name = "Zeichnung_Änderung"
+    [fields.catalog.K4060]
+      dtype = 'string'
+      name = 'Maschinenkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4061]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4062]
+      dtype = 'string'
+      name = "Maschine_Nummer"
+    [fields.catalog.K4063]
+      dtype = 'string'
+      name = "Maschine_Bezeichnung"
+    [fields.catalog.K4064]
+      dtype = 'string'
+      name = 'Bereich'
+    [fields.catalog.K4065]
+      dtype = 'string'
+      name = 'Abteilung'
+    [fields.catalog.K4066]
+      dtype = 'string'
+      name = 'Arbeitsgang-Nr.'
+    [fields.catalog.K4067]
+      dtype = 'string'
+      name = 'Externe Referenznummer'
+    [fields.catalog.K4070]
+      dtype = 'string'
+      name = "Prüfmittelkatalog (Bezeichnung des Haupt-/Subkatalogs)"
+    [fields.catalog.K4071]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4072]
+      dtype = 'string'
+      name = "Prüfmittel_Nummer"
+    [fields.catalog.K4073]
+      dtype = 'string'
+      name = "Prüfmittel_Bezeichnung"
+    [fields.catalog.K4074]
+      dtype = 'string'
+      name = "Prüfmittel_Gruppe"
+    [fields.catalog.K4075]
+      dtype = 'datetime'
+      name = "Prüfmittel_letzte-Prüfung"
+    [fields.catalog.K4076]
+      dtype = 'datetime'
+      name = "Prüfmittel_nächste-Prüfung"
+    [fields.catalog.K4077]
+      dtype = 'string'
+      name = 'IP-Adresse'
+    [fields.catalog.K4078]
+      dtype = 'string'
+      name = 'Einsatzort'
+    [fields.catalog.K4079]
+      dtype = 'string'
+      name = 'Computermodell'
+    [fields.catalog.K4080]
+      dtype = 'string'
+      name = 'Einheitenkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4081]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4082]
+      dtype = 'string'
+      name = "Einheit_Nummer"
+    [fields.catalog.K4083]
+      dtype = 'string'
+      name = "Einheit_Bezeichnung"
+    [fields.catalog.K4090]
+      dtype = 'string'
+      name = "Prüferkatalog (Bezeichnung des Haupt-/Subkatalogs)"
+    [fields.catalog.K4091]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4092]
+      dtype = 'string'
+      name = "Prüfer_Nummer"
+    [fields.catalog.K4093]
+      dtype = 'string'
+      name = "Prüfer_Name"
+    [fields.catalog.K4094]
+      dtype = 'string'
+      name = "Prüfer_Abteilung"
+    [fields.catalog.K4095]
+      dtype = 'string'
+      name = "Prüfer_Telefon"
+    [fields.catalog.K4096]
+      dtype = 'string'
+      name = "Prüfer_Fax"
+    [fields.catalog.K4097]
+      dtype = 'string'
+      name = "Prüfer_E-Mail"
+    [fields.catalog.K4098]
+      dtype = 'string'
+      name = "Prüfer_Position"
+    [fields.catalog.K4099]
+      dtype = 'string'
+      name = "Prüfer_Anrede"
+    [fields.catalog.K4100]
+      dtype = 'string'
+      name = 'Auftraggeberkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4101]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4102]
+      dtype = 'string'
+      name = "Auftraggeber_Nummer"
+    [fields.catalog.K4103]
+      dtype = 'string'
+      name = "Auftraggeber_Name"
+    [fields.catalog.K4110]
+      dtype = 'string'
+      name = 'Erzeugniskatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4111]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4112]
+      dtype = 'string'
+      name = "Erzeugnis_Nummer"
+    [fields.catalog.K4113]
+      dtype = 'string'
+      name = "Erzeugnis_Name"
+    [fields.catalog.K4120]
+      dtype = 'string'
+      name = 'Mitarbeiterkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4121]
+      dtype = 'int16'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4122]
+      dtype = 'string'
+      name = "Mitarbeiter_Nummer"
+    [fields.catalog.K4123]
+      dtype = 'string'
+      name = "Mitarbeiter_Name"
+    [fields.catalog.K4124]
+      dtype = 'string'
+      name = "Mitarbeiter_Abteilung"
+    [fields.catalog.K4125]
+      dtype = 'string'
+      name = "Mitarbeiter_Telefon"
+    [fields.catalog.K4126]
+      dtype = 'string'
+      name = "Mitarbeiter_Fax"
+    [fields.catalog.K4127]
+      dtype = 'string'
+      name = "Mitarbeiter_E-Mail"
+    [fields.catalog.K4128]
+      dtype = 'string'
+      name = "Mitarbeiter_Position"
+    [fields.catalog.K4129]
+      dtype = 'string'
+      name = "Mitarbeiter_Anrede"
+    [fields.catalog.K4220]
+      dtype = 'string'
+      name = 'Ereigniskatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4221]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4222]
+      dtype = 'string'
+      name = 'Ereignisnummer'
+    [fields.catalog.K4223]
+      dtype = 'string'
+      name = 'Ereignistext'
+    [fields.catalog.K4230]
+      dtype = 'string'
+      name = 'Ordinalklassenkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4231]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4232]
+      dtype = 'string'
+      name = "Ordinalklassen_Nummer"
+    [fields.catalog.K4233]
+      dtype = 'string'
+      name = "Ordinalklassen_Bezeichnung"
+    [fields.catalog.K4234]
+      dtype = 'string'
+      name = "Ordinalklassen_Bewertung"
+    [fields.catalog.K4235]
+      dtype = 'object'
+      name = "Ordinalklassen_Rang"
+    [fields.catalog.K4236]
+      dtype = 'object'
+      name = "Ordinalklassen_i.O.-n.i.O."
+    [fields.catalog.K4237]
+      dtype = 'object'
+      name = "Ordinalklassen_Gültigkeit"
+    [fields.catalog.K4240]
+      dtype = 'string'
+      name = "Prozessparameterkatalog (Bezeichnung des Haupt-/Subkatalogs)"
+    [fields.catalog.K4241]
+      dtype = 'object'
+      name = 'Katalogelement (Zuordnung Prozessparameter <-> Subkatalog)'
+    [fields.catalog.K4242]
+      dtype = 'string'
+      name = 'Nummer des Prozessparameters'
+    [fields.catalog.K4243]
+      dtype = 'string'
+      name = 'Bezeichnung des Prozessparameters'
+    [fields.catalog.K4244]
+      dtype = 'string'
+      name = "Prozessparameterkurztext"
+    [fields.catalog.K4245]
+      dtype = 'string'
+      name = "Prozessparameterwert_Nummer"
+    [fields.catalog.K4246]
+      dtype = 'string'
+      name = "Prozessparameterwert_Text"
+    [fields.catalog.K4249]
+      dtype = 'object'
+      name = 'Zuordnung Prozessparameter <-> Prozessparameterwerte'
+    [fields.catalog.K4250]
+      dtype = 'string'
+      name = 'Nestkatalog (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4251]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4252]
+      dtype = 'string'
+      name = "Nest_Nummer"
+    [fields.catalog.K4253]
+      dtype = 'string'
+      name = "Nest_Bezeichnung"
+    [fields.catalog.K4270]
+      dtype = 'string'
+      name = 'Katalog K0061 (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4271]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4272]
+      dtype = 'string'
+      name = "K0061_Nummer"
+    [fields.catalog.K4273]
+      dtype = 'string'
+      name = "K0061_Bezeichnung"
+    [fields.catalog.K4280]
+      dtype = 'string'
+      name = 'Katalog K0062 (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4281]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4282]
+      dtype = 'string'
+      name = "K0062_Nummer"
+    [fields.catalog.K4283]
+      dtype = 'string'
+      name = "K0062_Bezeichnung"
+    [fields.catalog.K4290]
+      dtype = 'string'
+      name = 'Katalog K0063 (Bezeichnung des Haupt-/Subkatalogs)'
+    [fields.catalog.K4291]
+      dtype = 'object'
+      name = 'Zuordnung der Elemente des Hauptkatalogs zum jeweiligen Subkatalog'
+    [fields.catalog.K4292]
+      dtype = 'string'
+      name = "K0063_Nummer"
+    [fields.catalog.K4293]
+      dtype = 'string'
+      name = "K0063_Bezeichnung"
+    [fields.catalog.K4501]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4502]
+      dtype = 'string'
+      name = 'Kunde - Bemerkung'
+    [fields.catalog.K4511]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4512]
+      dtype = 'string'
+      name = 'Hersteller - Bemerkung'
+    [fields.catalog.K4521]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4522]
+      dtype = 'string'
+      name = 'Lieferant - Bemerkung'
+    [fields.catalog.K4531]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4532]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4541]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4542]
+      dtype = 'string'
+      name = 'Werkstoff - Bemerkung'
+    [fields.catalog.K4551]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4552]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4561]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4562]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4571]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4572]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4575]
+      dtype = 'string'
+      name = 'Programmversion'
+    [fields.catalog.K4576]
+      dtype = 'string'
+      name = 'Software'
+    [fields.catalog.K4581]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4582]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4591]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4592]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4601]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4602]
+      dtype = 'object'
+      name = 'Bemerkung'
+    [fields.catalog.K4611]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4612]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4621]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4622]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4721]
+      dtype = 'object'
+      name = "Kennzeichnung spezieller Einträge"
+    [fields.catalog.K4722]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4731]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4732]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4741]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4742]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4751]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4752]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4771]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4772]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4781]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4782]
+      dtype = 'string'
+      name = 'Bemerkung'
+    [fields.catalog.K4791]
+      dtype = 'object'
+      name = "Kennzeichnung nicht mehr genutzter Einträge"
+    [fields.catalog.K4792]
+      dtype = 'string'
+      name = 'Bemerkung'
