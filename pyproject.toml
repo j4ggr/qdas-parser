@@ -21,6 +21,9 @@ build-backend = "pdm.backend"
 [tool.pdm.build]
 package-dir = "src"
 
+[tool.pyinstaller]
+hook-dirs = ["src/qdas_parser/hooks"]
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",
