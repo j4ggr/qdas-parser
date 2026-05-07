@@ -233,6 +233,17 @@ class QDASFileParser:
         """Yield all column names in data-layout order.
 
         Index columns → head-data columns → (cleaned) feature columns.
+
+        Examples
+        --------
+        After :meth:`parse_description` the column sequence reflects
+        the features defined in the ``.dfd`` file::
+
+            qdas.parse_description()
+            columns = list(qdas.gen_columns())
+            # ['Teilenummer', 'Auftrag', 'Teile ID',
+            #  <head K-Field names ...>,
+            #  'C1_Connector', 'C1_Connector_Supplier', ...]
         """
         for idx_column in self.index_columns:
             yield idx_column
@@ -243,7 +254,14 @@ class QDASFileParser:
                 yield self._clean_colname_(column)
 
     def kfields(self) -> Generator[KField, Any, None]:
-        """Yield a :class:`KField` for every line in the description file."""
+        """Yield a :class:`KField` for every line in the description file.
+
+        Examples
+        --------
+        Iterate over all K-Fields and collect feature-specific ones::
+
+            feature_kfields = [kf for kf in qdas.kfields() if kf]
+        """
         try:
             with open(self.dfile, 'r') as description_data:
                 for line in description_data:
@@ -260,7 +278,13 @@ class QDASFileParser:
     def rows(self) -> Generator[List[List[str]], Any, None]:
         """Yield measurement rows from the value file as nested lists.
 
-        Delegates to the compiled ``_fast`` extension when available.
+        Each yielded item is a list of per-feature sub-lists::
+
+            # row[i]  → [value, ext1, ext2, ...]  for feature i+1
+            row = next(qdas.rows())
+            value_of_feature_1 = row[0][0]
+
+        Delegates to :func:`._fast.rows_fast`.
         """
         yield from _rows_fast(self.vfile, QDAS.SEP_F, QDAS.SEP_E)
 
@@ -273,6 +297,14 @@ class QDASFileParser:
             Decoded header K-Field pairs.
         features : List[Feature]
             Feature objects sorted by feature number.
+
+        Examples
+        --------
+        ::
+
+            head, features = qdas.parse_description()
+            print(head['Teilenummer'])     # part number from K1001
+            print(features[0].label)       # label of first feature
         """
         for kfield in self.kfields():
             if kfield == 'K0100':
@@ -309,7 +341,18 @@ class QDASFileParser:
         Returns
         -------
         DataFrame
-            MultiIndex DataFrame with ``('Modul', 'Merkmal')`` column levels.
+            MultiIndex DataFrame with ``('Modul', 'Merkmal')`` column levels
+            and ``['Teilenummer', 'Auftrag', 'Teile ID']`` as the row index.
+
+        Examples
+        --------
+        ::
+
+            qdas.parse_description()
+            qdas.parse_values()
+            df = qdas.dataframe()
+            # df.columns is a MultiIndex: (module_name, feature_label)
+            df_no_head = qdas.dataframe(add_head=False)  # feature cols only
         """
         columns = list(self.gen_columns())
         df = pd.DataFrame(self.data, columns=columns)

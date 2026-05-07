@@ -32,6 +32,24 @@ class AssemblyLineModule:
     tc_shortcut : str, optional
         Short prefix used in human-readable test-cell descriptions
         (e.g. ``'TC'``). Defaults to ``'TC'``.
+
+    Examples
+    --------
+    Regular module (no test-cell map)::
+
+        mod = AssemblyLineModule('m01_bd', 'ACT1', 'as1', 'bd')
+        mod.name          # 'm01_bd'
+        bool(mod)         # False — not a test cell
+        mod.description   # 'm01_bd'
+
+    Test-cell detection via *tc_modules*::
+
+        tc_map = {'ACT1': {'as1': ['tc1_bd', 'tc2_bd', 'tc3_bd']}}
+        mod = AssemblyLineModule('tc1_bd', 'ACT1', 'as1', 'bd',
+                                 tc_modules=tc_map)
+        bool(mod)         # True
+        mod.tc_number     # 1
+        mod.description   # 'TC1'
     """
 
     __slots__ = (

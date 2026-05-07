@@ -89,12 +89,35 @@ def format_order(order: str | int) -> str:
 
 
 class KField:
-    """Represented object of a key number and field content pair.
+    """A K-Field key/value pair parsed from a Q-DAS description file.
+
+    Prefer :meth:`from_line` to construct from a raw ``.dfd`` line.
+    Direct construction is useful when key, value, and feature number
+    are already known.
 
     Parameters
     ----------
-    dfd_line : str
-        Single line from a QDAS description file (``.dfd`` file).
+    key : str
+        K-Field key string (e.g. ``'K2002'``).
+    value : str
+        Raw field value string.
+    feature_number : int or None
+        Ordinal feature number (1-based) this K-Field belongs to,
+        or ``0`` for header fields.
+
+    Examples
+    --------
+    Parse from a raw description-file line:
+
+    >>> kf = KField.from_line('K2002/1 Merkmalname\\n')
+    >>> kf.key, kf.value, kf.feature_number
+    ('K2002', 'Merkmalname', 1)
+
+    Construct directly and check feature membership:
+
+    >>> kf = KField('K2002', 'Durchmesser', 1)
+    >>> bool(kf), kf.feature_index
+    (True, 0)
     """
 
     __slots__ = (
@@ -150,9 +173,19 @@ class KField:
     def feature_index(self) -> int:
         """Zero-based index of the feature this K-Field belongs to
         (read-only).
-        
-        Returns -1 when the K-Field does not belong to any feature 
-        section."""
+
+        Returns ``-1`` when the K-Field does not belong to any feature
+        section (header field or ``feature_number == 0``).
+
+        Examples
+        --------
+        >>> KField('K2002', 'Name', 1).feature_index
+        0
+        >>> KField('K2002', 'Name', 3).feature_index
+        2
+        >>> KField('K1001', '123', 0).feature_index
+        -1
+        """
         return self.feature_number - 1 if self.feature_number else -1
 
     def __init__(
@@ -185,6 +218,20 @@ class KField:
         ------
         ValueError
             When the line does not match the expected K-Field pattern.
+
+        Examples
+        --------
+        Header field (no feature number):
+
+        >>> kf = KField.from_line('K1001 1234567\\n')
+        >>> kf.key, kf.value, kf.feature_number
+        ('K1001', '1234567', 0)
+
+        Feature-specific field:
+
+        >>> kf = KField.from_line('K2002/1 Merkmalname\\n')
+        >>> kf.key, kf.value, kf.feature_number
+        ('K2002', 'Merkmalname', 1)
         """
         match = QDAS.RE_HEADER.match(line)
         if match:
@@ -209,6 +256,18 @@ class KField:
         value : str
             Translated field value for ``'defined'`` types; raw value
             for all other types.
+
+        Examples
+        --------
+        A ``'required'`` field — raw key mapped to a descriptive name:
+
+        >>> KField('K1001', '1234567', 0).decode()
+        ('Teilenummer', '1234567')
+
+        A ``'defined'`` field — both name and value are translated:
+
+        >>> KField('K2004', '0', 1).decode()
+        ('Merkmalart', 'variabel')
         """
         name = self.key
         value = self.value
@@ -397,10 +456,20 @@ class Feature:
         - ``K2142`` sets :attr:`unit`.
         - ``K9004`` appends the value to the label for process disambiguation.
 
+        All K-Fields are also stored in :attr:`data` via :meth:`KField.decode`.
+
         Parameters
         ----------
         kfield : KField
             A K-Field parsed from a ``.dfd`` file line.
+
+        Examples
+        --------
+        >>> f = Feature(1)
+        >>> f.add(KField('K2002', 'Durchmesser', 1))
+        >>> f.add(KField('K2142', 'mm', 1))
+        >>> f.label, f.unit, f.columns
+        ('Durchmesser', 'mm', ['Durchmesser'])
         """
         match kfield.key:
             case 'K2002':
@@ -439,13 +508,30 @@ class ProductionOrder:
     """Object to handle production orders (FA).
 
     It ensures the correct format so that comparisons can be made.
-    The order is either a 12 digit number, padded on the left with 0
+    The order is either a 12-digit number, padded on the left with ``0``,
     or an empty string.
+
+    Use :func:`format_order` when you only need the normalised string
+    without constructing a full object (e.g. ``df['order'].map(format_order)``).
 
     Parameters
     ----------
     order : int or str, optional
         Production order number, by default ``''``.
+
+    Examples
+    --------
+    >>> po = ProductionOrder('1234567')
+    >>> str(po)
+    '000001234567'
+    >>> po == 1234567        # comparison normalises both sides
+    True
+    >>> bool(ProductionOrder(''))
+    False
+    >>> int(po)
+    1234567
+    >>> repr(ProductionOrder(''))
+    'order:\\tall'
     """
 
     __slots__ = ('_order',)

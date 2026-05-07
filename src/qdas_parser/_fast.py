@@ -86,13 +86,6 @@ def rows_fast(
 def flatten_fast(n_ids: int, nested_row: List[List[Any]]) -> List[Any]:
     """Flatten a nested measurement row and prepend index placeholders.
 
-    This function takes a nested list of measurement values (as yielded
-    by :func:`rows_fast`) and flattens it into a single list, prepending
-    index placeholders as specified. The caller can specify how many 
-    empty strings to prepend as index placeholders. The resulting flat 
-    list will contain the index placeholders followed by all measurement
-    values in feature order.
-
     Parameters
     ----------
     n_ids : int
@@ -105,5 +98,12 @@ def flatten_fast(n_ids: int, nested_row: List[List[Any]]) -> List[Any]:
     List[Any]
         Flat list starting with *n_ids* empty strings followed by all
         measurement values in feature order.
+
+    Examples
+    --------
+    Two features, three index columns, one extension on feature 2:
+
+    >>> flatten_fast(3, [['1.23'], ['4.56', 'batch-01']])
+    ['', '', '', '1.23', '4.56', 'batch-01']
     """
     return list(chain(repeat('', n_ids), chain.from_iterable(nested_row)))
