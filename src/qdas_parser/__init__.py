@@ -19,6 +19,11 @@ Public API
 :class:`ProductionOrder`
     Thin ``str`` subclass representing a production order number.
 
+:func:`format_order`
+    Normalise any order value (``int`` or ``str``) to a 12-digit
+    zero-padded string.  Useful when reading order numbers from raw
+    data files that may be inconsistently formatted.
+
 :data:`QDAS`
     Package-level constants (``QDAS.SEP_F``, ``QDAS.SEP_E``,
     ``QDAS.RE_HEADER``, ``QDAS.RE_CLEAN_LINE``, ``QDAS.INDEX_COLUMNS``,
@@ -29,6 +34,7 @@ from ._constants import QDAS
 from ._models import Feature
 from ._models import KField
 from ._models import ProductionOrder
+from ._models import format_order
 from ._module import AssemblyLineModule
 from ._parser import QDASFileParser
 
@@ -38,5 +44,6 @@ __all__ = [
     'Feature',
     'AssemblyLineModule',
     'ProductionOrder',
+    'format_order',
     'QDASFileParser',
 ]

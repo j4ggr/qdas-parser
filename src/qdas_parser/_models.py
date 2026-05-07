@@ -17,6 +17,15 @@ from ._config import QDAS_CONFIG
 from ._constants import QDAS
 
 
+__all__ = [
+    'field_type',
+    'format_order',
+    'KField',
+    'Feature',
+    'ProductionOrder',
+]
+
+
 def field_type(
         kfield_key: str
         ) -> Literal['other', 'required', 'defined', 'supported', 'catalog']:
@@ -41,6 +50,42 @@ def field_type(
         if field_type not in ignore and kfield_key in kfields.keys():
             return field_type
     return 'other'
+
+
+def format_order(order: str | int) -> str:
+    """Return *order* as a 12-digit zero-padded string, or ``''``.
+
+    Parameters
+    ----------
+    order : str or int
+        Production order number to normalise.  Accepts integers, numeric
+        strings (with optional whitespace), or empty/``None``-like values.
+
+    Returns
+    -------
+    str
+        12-digit zero-padded string, e.g. ``'000001234567'``, or ``''``
+        when *order* is empty, ``None``, or non-numeric.
+
+    Examples
+    --------
+    >>> format_order('1234567')
+    '000001234567'
+    >>> format_order(1234567)
+    '000001234567'
+    >>> format_order('')
+    ''
+    """
+    if not order and order != 0:
+        return ''
+    if isinstance(order, str):
+        order = order.strip()
+        if not order:
+            return ''
+    try:
+        return f'{int(order):012}'
+    except (ValueError, TypeError):
+        return ''
 
 
 class KField:
@@ -405,45 +450,47 @@ class ProductionOrder:
 
     __slots__ = ('_order',)
 
+    _order: str
+    """Internal storage of the production order number as a 12-digit 
+    string or an empty string."""
+
     def __init__(self, order: int | str = '') -> None:
-        self._order = ''
-        self.order = order
+        self._order = format_order(order)
 
     @property
     def order(self) -> str:
-        """Production order number as a 12-digit string."""
+        """Production order number as a 12-digit string (read-only).
+
+        Gets the production order number in a consistent format,
+        ensuring that comparisons can be made.
+        """
         return self._order
 
     @order.setter
     def order(self, order: str | int) -> None:
-        self._order = self._ensure_format_(order)
+        self._order = format_order(order)
 
-    def _ensure_format_(self, order: str | int) -> str:
-        """Ensure format as a 12-digit zero-padded number or empty string."""
-        if order is None or str(order).strip() == '':
-            return ''
-        try:
-            return f'{int(order):012}'
-        except ValueError:
-            return ''
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ProductionOrder):
+            return self._order == other._order
 
-    def __eq__(self, order: object) -> bool:
-        _order: str = self._ensure_format_(order)  # type: ignore[arg-type]
-        return self.order == _order
+        elif isinstance(other, (str, int)):
+            return self._order == format_order(other)
+        
+        return NotImplemented
 
     def __bool__(self) -> bool:
-        return bool(self.order)
+        return bool(self._order)
 
     def __str__(self) -> str:
-        return self.order
+        return self._order
 
     def __repr__(self) -> str:
-        order = self.order if self.order else 'all'
-        return f'order:\t{order}'
+        return f'order:\t{self._order or "all"}'
 
     def __int__(self) -> int:
-        return int(self.order) if self else 0
+        return int(self._order) if self._order else 0
 
     def __hash__(self) -> int:
-        return hash(self.order)
+        return hash(self._order)
 
