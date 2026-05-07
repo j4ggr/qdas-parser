@@ -11,6 +11,18 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.1.2] — 2026-05-07
+
+### Added
+
+- `src/qdas_parser/hooks/hook-qdas_parser.py` — PyInstaller hook that calls
+  `collect_data_files('qdas_parser')` so `qdas.toml` is automatically included
+  in frozen applications without requiring `--collect-data` or a custom `.spec`
+- `[tool.pyinstaller] hook-dirs` entry in `pyproject.toml` so PyInstaller
+  discovers the hook from the installed package
+
+---
+
 ## [0.1.0] — 2026-05-07
 
 Initial public release.
@@ -72,5 +84,6 @@ Initial public release.
 - `src/` layout; `package-dir = "src"` in `pyproject.toml`
 - Dev dependencies: `pytest ≥ 8.0`, `pytest-benchmark ≥ 5.0`
 
-[Unreleased]: https://github.com/j4ggr/qdas-parser/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/j4ggr/qdas-parser/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/j4ggr/qdas-parser/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/j4ggr/qdas-parser/releases/tag/v0.1.0
