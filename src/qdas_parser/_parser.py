@@ -1,9 +1,8 @@
-"""Core parser: :class:`ProductionOrder` and :class:`QDASFileParser`.
+"""Core parser: :class:`QDASFileParser`.
 
-The two hot-path methods (:meth:`QDASFileParser.rows` and
-:meth:`QDASFileParser._flatten_`) delegate to ``_fast`` if the compiled
-Cython extension is available, otherwise fall back to the pure-Python
-implementations in :mod:`._fast`.
+The hot-path methods (:meth:`QDASFileParser.rows` and
+:meth:`QDASFileParser._flatten_`) use the pure-Python implementations
+in :mod:`._fast`.
 """
 
 import re
@@ -23,7 +22,7 @@ from pathlib import Path
 from pandas.core.api import DataFrame
 
 from ._constants import QDAS
-from ._models import KField, Feature
+from ._models import KField, Feature, ProductionOrder
 from ._module import AssemblyLineModule
 
 from ._fast import rows_fast as _rows_fast
@@ -35,14 +34,6 @@ logger = logging.getLogger(__name__)
 def ensure_path(filepath: str | Path) -> Path:
     """Return *filepath* as a :class:`~pathlib.Path`."""
     return filepath if isinstance(filepath, Path) else Path(filepath)
-
-
-class ProductionOrder(str):
-    """Production order identifier parsed from a QDAS description file.
-
-    A thin :class:`str` subclass so that ``str(order)`` always works and
-    the value can be used directly as a column value.
-    """
 
 
 class QDASFileParser:

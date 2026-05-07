@@ -9,7 +9,8 @@ from pathlib import Path
 import pytest
 import pandas as pd
 
-from qdas_parser._parser import ProductionOrder, QDASFileParser
+from qdas_parser._models import ProductionOrder
+from qdas_parser._parser import QDASFileParser
 
 
 # ===========================================================================
@@ -17,14 +18,36 @@ from qdas_parser._parser import ProductionOrder, QDASFileParser
 # ===========================================================================
 
 class TestProductionOrder:
-    def test_is_str_subclass(self):
-        assert isinstance(ProductionOrder('1234567'), str)
+    def test_str_is_12_digits_zero_padded(self):
+        assert str(ProductionOrder('1234567')) == '000001234567'
 
-    def test_str_roundtrip(self):
-        assert str(ProductionOrder('1234567')) == '1234567'
+    def test_int_input_is_formatted(self):
+        assert str(ProductionOrder(1234567)) == '000001234567'
 
-    def test_empty_is_valid(self):
+    def test_empty_string_is_valid(self):
         assert str(ProductionOrder('')) == ''
+
+    def test_bool_false_when_empty(self):
+        assert not ProductionOrder('')
+
+    def test_bool_true_when_set(self):
+        assert ProductionOrder('1234567')
+
+    def test_eq_normalises_both_sides(self):
+        assert ProductionOrder('1234567') == '000001234567'
+        assert ProductionOrder('1234567') == 1234567
+
+    def test_repr_contains_order(self):
+        assert '000001234567' in repr(ProductionOrder('1234567'))
+
+    def test_repr_empty_shows_all(self):
+        assert 'all' in repr(ProductionOrder(''))
+
+    def test_int_roundtrip(self):
+        assert int(ProductionOrder('1234567')) == 1234567
+
+    def test_hash_equal_for_same_order(self):
+        assert hash(ProductionOrder('1234567')) == hash(ProductionOrder(1234567))
 
 
 # ===========================================================================

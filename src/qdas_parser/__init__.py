@@ -28,8 +28,8 @@ Public API
 from ._constants import QDAS
 from ._models import Feature
 from ._models import KField
+from ._models import ProductionOrder
 from ._module import AssemblyLineModule
-from ._parser import ProductionOrder
 from ._parser import QDASFileParser
 
 __all__ = [

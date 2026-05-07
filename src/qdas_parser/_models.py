@@ -1,4 +1,4 @@
-"""Pure Q-DAS data model: :class:`KField` and :class:`Feature`.
+"""Pure Q-DAS data model: :class:`KField`, :class:`Feature`, and :class:`ProductionOrder`.
 
 These classes have no I/O and no side-effects, making them ideal
 candidates for a future Cython extension (``_fast.pyx``).
@@ -388,4 +388,62 @@ class Feature:
         return (
             f'Feature {self.number}: {self.label} ({self.unit}), '
             f'columns: {self.columns}')
-    
+
+
+class ProductionOrder:
+    """Object to handle production orders (FA).
+
+    It ensures the correct format so that comparisons can be made.
+    The order is either a 12 digit number, padded on the left with 0
+    or an empty string.
+
+    Parameters
+    ----------
+    order : int or str, optional
+        Production order number, by default ``''``.
+    """
+
+    __slots__ = ('_order',)
+
+    def __init__(self, order: int | str = '') -> None:
+        self._order = ''
+        self.order = order
+
+    @property
+    def order(self) -> str:
+        """Production order number as a 12-digit string."""
+        return self._order
+
+    @order.setter
+    def order(self, order: str | int) -> None:
+        self._order = self._ensure_format_(order)
+
+    def _ensure_format_(self, order: str | int) -> str:
+        """Ensure format as a 12-digit zero-padded number or empty string."""
+        if order is None or str(order).strip() == '':
+            return ''
+        try:
+            return f'{int(order):012}'
+        except ValueError:
+            return ''
+
+    def __eq__(self, order: object) -> bool:
+        _order: str = self._ensure_format_(order)  # type: ignore[arg-type]
+        return self.order == _order
+
+    def __bool__(self) -> bool:
+        return bool(self.order)
+
+    def __str__(self) -> str:
+        return self.order
+
+    def __repr__(self) -> str:
+        order = self.order if self.order else 'all'
+        return f'order:\t{order}'
+
+    def __int__(self) -> int:
+        return int(self.order) if self else 0
+
+    def __hash__(self) -> int:
+        return hash(self.order)
+
