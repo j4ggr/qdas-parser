@@ -14,7 +14,6 @@ already in memory.
 
 from __future__ import annotations
 
-import importlib
 from pathlib import Path
 from typing import Callable
 
@@ -23,7 +22,7 @@ import pytest
 # ---------------------------------------------------------------------------
 # Synthetic workload parameters
 # ---------------------------------------------------------------------------
-N_ROWS = 5_000
+N_ROWS = 30_000
 N_FEATURES = 10
 N_EXTENSIONS = 5   # extensions per feature (including the base value)
 
@@ -78,30 +77,11 @@ def _load_py() -> tuple[Callable, Callable]:
     return mod.rows_fast, mod.flatten_fast
 
 
-def _load_cython() -> tuple[Callable, Callable] | None:
-    """Import the compiled Cython extension; return None if not built."""
-    try:
-        import importlib.util as ilu
-        # Force import of the compiled .pyd/.so, not the .py fallback
-        spec = ilu.find_spec('qdas_parser._fast')
-        if spec is None or spec.origin is None:
-            return None
-        origin = Path(spec.origin)
-        if origin.suffix == '.py':
-            return None  # only pure Python available
-        mod = ilu.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        return mod.rows_fast, mod.flatten_fast
-    except Exception:
-        return None
-
-
 # ---------------------------------------------------------------------------
 # Load implementations once — avoids import overhead inside the benchmark loop
 # ---------------------------------------------------------------------------
 
 _rows_py, _flatten_py = _load_py()
-_cython_pair = _load_cython()  # None if extension not built
 
 
 # ---------------------------------------------------------------------------
@@ -121,13 +101,6 @@ class TestRowsFastBench:
         result = benchmark(_exhaust_rows, _rows_py, synthetic_vfile)
         assert len(result) == N_ROWS
 
-    def test_rows_cython(self, benchmark, synthetic_vfile):
-        if _cython_pair is None:
-            pytest.skip('Cython extension not built — run: python setup.py build_ext --inplace')
-        rows_fast, _ = _cython_pair
-        result = benchmark(_exhaust_rows, rows_fast, synthetic_vfile)
-        assert len(result) == N_ROWS
-
 
 # ---------------------------------------------------------------------------
 # flatten_fast benchmarks
@@ -136,11 +109,4 @@ class TestRowsFastBench:
 class TestFlattenFastBench:
     def test_flatten_pure_python(self, benchmark, sample_nested_row):
         result = benchmark(_flatten_py, 3, sample_nested_row)
-        assert len(result) == 3 + N_FEATURES * N_EXTENSIONS
-
-    def test_flatten_cython(self, benchmark, sample_nested_row):
-        if _cython_pair is None:
-            pytest.skip('Cython extension not built — run: python setup.py build_ext --inplace')
-        _, flatten_fast = _cython_pair
-        result = benchmark(flatten_fast, 3, sample_nested_row)
         assert len(result) == 3 + N_FEATURES * N_EXTENSIONS

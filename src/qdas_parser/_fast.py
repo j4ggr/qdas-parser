@@ -26,7 +26,7 @@ from typing import Any
 from typing import Generator
 from typing import List
 from pathlib import Path
-from itertools import chain
+from itertools import chain, repeat
 
 from ._constants import QDAS
 
@@ -106,4 +106,4 @@ def flatten_fast(n_ids: int, nested_row: List[List[Any]]) -> List[Any]:
         Flat list starting with *n_ids* empty strings followed by all
         measurement values in feature order.
     """
-    return [''] * n_ids + list(chain.from_iterable(nested_row))
+    return list(chain(repeat('', n_ids), chain.from_iterable(nested_row)))

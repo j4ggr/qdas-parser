@@ -13,7 +13,7 @@ Build (in-place for development)::
 
 """
 
-from itertools import chain
+from itertools import chain, repeat
 from pathlib import Path
 
 from qdas_parser._constants import QDAS as _QDAS
@@ -68,4 +68,4 @@ def flatten_fast(int n_ids, list nested_row):
     list
         Flat list: ``n_ids`` empty strings + all measurement values.
     """
-    return [''] * n_ids + list(chain.from_iterable(nested_row))
+    return list(chain(repeat('', n_ids), chain.from_iterable(nested_row)))

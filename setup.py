@@ -1,13 +1,5 @@
+# Build is managed by pdm-backend via pyproject.toml.
+# This file is kept as a placeholder for editable installs
+# that require a setup.py entrypoint.
 from setuptools import setup
-from Cython.Build import cythonize
-
-setup(
-    ext_modules=cythonize(
-        "src/qdas_parser/_fast.pyx",
-        compiler_directives={
-            "language_level": "3",
-            "boundscheck": False,
-            "wraparound": False,
-        },
-    )
-)
+setup()

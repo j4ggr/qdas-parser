@@ -26,14 +26,8 @@ from ._constants import QDAS
 from ._models import KField, Feature
 from ._module import AssemblyLineModule
 
-try:
-    from ._fast import rows_fast as _rows_fast
-    from ._fast import flatten_fast as _flatten_fast
-    _USE_FAST = True
-except ImportError:  # compiled extension not built yet
-    from ._fast import rows_fast as _rows_fast          # type: ignore[assignment]
-    from ._fast import flatten_fast as _flatten_fast    # type: ignore[assignment]
-    _USE_FAST = False
+from ._fast import rows_fast as _rows_fast
+from ._fast import flatten_fast as _flatten_fast
 
 logger = logging.getLogger(__name__)
 
