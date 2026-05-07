@@ -38,6 +38,11 @@ except ImportError:  # compiled extension not built yet
 logger = logging.getLogger(__name__)
 
 
+def ensure_path(filepath: str | Path) -> Path:
+    """Return *filepath* as a :class:`~pathlib.Path`."""
+    return filepath if isinstance(filepath, Path) else Path(filepath)
+
+
 class ProductionOrder(str):
     """Production order identifier parsed from a QDAS description file.
 
@@ -83,23 +88,128 @@ class QDASFileParser:
     """
 
     __slots__ = (
-        'vfile', 'dfile', 'order', 'module', 'stem', 'data', 'head_data',
-        'head_columns', 'features', 'index_columns', 'product',
-        'description_parsed', '_mtime', '_kind')
+        'vfile',
+        'dfile',
+        'order',
+        'module',
+        'stem',
+        'data',
+        'head_data',
+        'head_columns',
+        'features',
+        'index_columns',
+        'product',
+        '_description_parsed',
+        '_fn_date',
+        '_mtime',
+        '_mtime_lstat',
+        '_kind')
 
     dfile: Path
+    """Description file path (``.dfd``)."""
+
     vfile: Path
+    """Value file path (``.dfx`` for process data, ``.dfb`` for 
+    batch data)."""
+
     order: ProductionOrder
+    """Production order identifier parsed from the description file."""
+
     module: AssemblyLineModule
+    """Assembly-line module inferred from the description file path and
+    test-cell module map."""
+
     stem: str
+    """Six-character date prefix of the description file stem 
+    (``YYMMDD``)."""
+
     data: List[List[Any]]
+    """Parsed measurement data as a list of rows, where each row is a
+    list of values corresponding to the columns yielded by 
+    :meth:`gen_columns`."""
+
     head_data: Dict[str, str]
+    """Decoded header K-Field pairs from the description file, excluding
+    K0100 and feature-specific K-Fields."""
+
     head_columns: List[str]
+    """Column names corresponding to the header K-Fields in 
+    :attr:`head_data`."""
+
     features: List[Feature]
+    """List of features parsed from the description file."""
+
     index_columns: List[str]
+    """Column names to use as DataFrame index (e.g. 
+    ``'Chargennummer'``)."""
+
     product: str
-    description_parsed: bool
-    _mtime: float
+    """Product identifier (e.g. ``'ACT1'``) passed at initialization."""
+
+    _description_parsed: bool
+    """Flag indicating whether the description file has been parsed yet."""
+
+    @property
+    def description_parsed(self) -> bool:
+        """Flag indicating whether the description file has been parsed 
+        yet (read-only).
+        
+        Parsing is required before parsing values or building 
+        DataFrames."""
+        return self._description_parsed
+
+    _fn_date: str
+    """Six-character date prefix of the description file stem 
+    (``YYMMDD``)."""
+
+    @property
+    def fn_date(self) -> str:
+        """Six-character date prefix of the description file stem 
+        in ``YYMMDD`` format (read-only)."""
+        return self._fn_date
+
+    _mtime: float | None
+    """POSIX timestamp derived from the description file's date prefix, 
+    used for sorting and comparison purposes."""
+
+    @property
+    def mtime(self) -> float:
+        """POSIX timestamp derived from the filename date prefix."""
+        if self._mtime is None:
+            self._mtime = dtp.parse(self.fn_date, yearfirst=True).timestamp()
+        return self._mtime
+    
+    _mtime_lstat: float | None
+    """POSIX timestamp of the description file's last modification time,
+    derived from the filesystem. Used for comparison with :attr:`mtime`
+    to determine if the file has been modified since it was last parsed."""
+
+    @property
+    def mtime_lstat(self) -> float:
+        """POSIX timestamp of the description file's last modification time,
+        derived from the filesystem (read-only).
+        
+        Used for comparison with :attr:`mtime` to determine if the file 
+        has been modified since it was last parsed."""
+        if self._mtime_lstat is None:
+            self._mtime_lstat = self.dfile.lstat().st_mtime
+        return self._mtime_lstat
+    
+    _kind: str | None
+    """Data kind: ``'bd'`` for batch data, ``'pc'`` for process data. 
+    When None, the kind is inferred from the file path."""
+
+    @property
+    def kind(self) -> str:
+        """Data kind: ``'bd'`` for batch data, ``'pc'`` for process data."""
+        if self._kind is not None:
+            return self._kind
+        return self.dfile.parents[1].name
+
+    @staticmethod
+    def ensure_path(filepath: str | Path) -> Path:
+        """Return *filepath* as a :class:`~pathlib.Path`."""
+        return filepath if isinstance(filepath, Path) else Path(filepath)
 
     def __init__(
             self,
@@ -110,34 +220,29 @@ class QDASFileParser:
             kind: str | None = None,
             module_name: str | None = None,
             line: str | None = None,
-    ) -> None:
+        ) -> None:
         self.data = []
         self.head_data = {}
         self.head_columns = []
         self.features = []
         self.index_columns = QDAS.INDEX_COLUMNS
         self.product = product
-        self.dfile = self.ensure_path(description_file)
+        self.dfile = ensure_path(description_file)
         self._kind = kind
         self.vfile = self._get_vfile_()
         self.module = self._get_module_(tc_modules or {}, tc_shortcut, module_name, line)
         self.order = ProductionOrder('')
-        self._mtime = dtp.parse(self.fn_date, yearfirst=True).timestamp()
+        self._mtime = None
+        self._mtime_lstat = None
+        self._description_parsed = False
+        self._fn_date = self.dfile.stem[:6]
 
     @property
-    def fn_date(self) -> str:
-        """Six-character date prefix of the description file stem (``YYMMDD``)."""
-        return self.dfile.stem[:6]
-
-    @property
-    def mtime_lstat(self) -> float:
-        """Filesystem modification timestamp of the description file."""
-        return self.dfile.lstat().st_mtime
-
-    @property
-    def mtime(self) -> float:
-        """POSIX timestamp derived from the filename date prefix."""
-        return self._mtime
+    def state(self) -> Dict[str, Any]:
+        """Snapshot of parser identity (module name and order)."""
+        return copy.deepcopy({
+            'module_name': f'{self.module}',
+            'order': f'{self.order}'})
 
     def gen_columns(self) -> Generator[str, Any, None]:
         """Yield all column names in data-layout order.
@@ -152,27 +257,20 @@ class QDASFileParser:
             for column in feature.columns:
                 yield self._clean_colname_(column)
 
-    @property
-    def state(self) -> Dict[str, Any]:
-        """Snapshot of parser identity (module name and order)."""
-        return copy.deepcopy({
-            'module_name': f'{self.module}',
-            'order': f'{self.order}'})
-
-    @staticmethod
-    def ensure_path(filepath: str | Path) -> Path:
-        """Return *filepath* as a :class:`~pathlib.Path`."""
-        return filepath if isinstance(filepath, Path) else Path(filepath)
-
     def kfields(self) -> Generator[KField, Any, None]:
         """Yield a :class:`KField` for every line in the description file."""
-        with open(self.dfile, 'r') as description_data:
-            try:
+        try:
+            with open(self.dfile, 'r') as description_data:
                 for line in description_data:
-                    yield KField(line)
-            except OSError as e:
-                logger.error('Parsing K-Fields for %s failed', self.dfile)
-                raise e
+                    yield KField.from_line(line)
+
+        except FileNotFoundError as e:
+            logger.error(f'Description file not found: {self.dfile}')
+            raise e
+        
+        except ValueError as e:
+            logger.error(f'Error parsing K-Field from line: {e}')
+            raise e
 
     def rows(self) -> Generator[List[List[str]], Any, None]:
         """Yield measurement rows from the value file as nested lists.
@@ -196,7 +294,7 @@ class QDASFileParser:
                 self.head_data = {}
                 self.features = [Feature(i + 1) for i in range(int(kfield.value))]
             elif kfield:
-                self.features[kfield.feature_number - 1].add(kfield)
+                self.features[kfield.feature_index].add(kfield)
             else:
                 self.head_data.update([kfield.decode()])
         self.order = ProductionOrder(self.head_data.get(QDAS.ORDER, ''))
@@ -262,7 +360,7 @@ class QDASFileParser:
             if col == QDAS.ORDER:
                 values = str(self.order)
             elif col == QDAS.PART_ID:
-                id_column = self._clean_colname_(self.features[0].id)
+                id_column = self._clean_colname_(self.features[0].identity)
                 values = df[id_column] if id_column in df.columns else ''
             else:
                 values = self.head_data.get(col, np.nan)
@@ -319,14 +417,17 @@ class QDASFileParser:
     def _remove_unusable_cols_(self, df: DataFrame) -> DataFrame:
         return df.loc[:, (df.notna() & (df != '0')).any(axis=0)]
 
-    @property
-    def kind(self) -> str:
-        """Data kind: ``'bd'`` for batch data, ``'pc'`` for process data."""
-        if self._kind is not None:
-            return self._kind
-        return self.dfile.parents[1].name
-
     def _get_vfile_(self) -> Path:
+        """Determine the value file path based on the description file 
+        path and data kind.
+        
+        Returns
+        -------
+        Path
+            Value file path with the same stem as the description file 
+            and a suffix determined by the data kind (``.dfx`` for
+            process data, ``.dfb`` for batch data).
+        """
         suffix = '.dfb' if self.kind == 'bd' else '.dfx'
         return self.dfile.with_suffix(suffix)
 
@@ -336,16 +437,68 @@ class QDASFileParser:
             tc_shortcut: str,
             module_name: str | None,
             line: str | None,
-    ) -> AssemblyLineModule:
+            ) -> AssemblyLineModule:
+        """Determine the assembly-line module based on the description 
+        file path and other parameters.
+
+        Parameters
+        ----------
+        tc_modules : Dict[str, Dict[str, List[str]]]
+            Test-cell module map injected into :class:`AssemblyLineModule`.
+        tc_shortcut : str
+            Prefix used in test-cell descriptions.
+        module_name : str | None
+            Module folder name (e.g. ``'m01'``). When None, the
+            immediate parent directory name is used as fallback.
+        line : str | None
+            Assembly-line identifier (e.g. ``'as1'``). When None, an 
+            empty string is used as a placeholder.
+
+        Returns
+        -------
+        AssemblyLineModule
+            Assembly-line module inferred from the description file path 
+            and test-cell module map.
+
+        Notes
+        -----
+        The module name is determined in the following order of 
+        precedence:
+        1. Explicit `module_name` parameter.
+        2. Immediate parent directory name of the description file.
+        
+        The line identifier is determined as follows:
+        1. Explicit `line` parameter.
+        2. If test-cell detection is enabled (i.e., `line` is not None), 
+           an empty string is used as a placeholder.
+
+        The module kind is determined as follows:
+        1. Explicit `kind` parameter.
+        2. Inferred from the second-to-last parent directory name of the 
+        description file."""
         return AssemblyLineModule(
             name=module_name if module_name is not None else self.dfile.parent.name,
             product=self.product,
             line=line if line is not None else '',
             kind=self.kind,  # type: ignore[arg-type]
             tc_modules=tc_modules,
-            tc_shortcut=tc_shortcut,
-        )
+            tc_shortcut=tc_shortcut,)
 
     def _flatten_(self, nested_row: List[List[Any]]) -> List[Any]:
-        """Flatten a nested measurement row, delegating to ``_fast`` when available."""
+        """Flatten a nested measurement row, delegating to ``_fast`` 
+        when available.
+        
+        Parameters
+        ----------
+        nested_row : List[List[Any]]
+            Nested list of measurement values corresponding to the 
+            current row, as yielded by :meth:`rows`.
+            
+        Returns
+        -------
+        List[Any]
+            Flattened list of measurement values corresponding to the 
+            current row, in the same order as the columns yielded by 
+            :meth:`gen_columns`.
+        """
         return _flatten_fast(len(self.index_columns), nested_row)

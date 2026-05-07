@@ -61,9 +61,9 @@ class TestBDDescription:
         assert labels[1] == 'C1_Connector_Supplier'
         assert labels[2] == 'C1_Connector_Revision'
 
-    def test_feature_id_set_from_chargennummer(self, bd_parser):
-        # 5 extensions → id = columns[3] = label_Chargennummer
-        assert bd_parser.features[0].id == 'C1_Connector_Part_Number_Chargennummer'
+    def test_feature_identity_set_from_chargennummer(self, bd_parser):
+        # 5 extensions → identity = columns[3] = label_Chargennummer
+        assert bd_parser.features[0].identity == 'C1_Connector_Part_Number_Chargennummer'
 
     def test_order_is_empty_no_auftrag_kfield(self, bd_parser):
         assert str(bd_parser.order) == ''
@@ -169,8 +169,8 @@ class TestPCDescription:
         assert pc_parser.features[1].unit == 'N'
         assert pc_parser.features[2].unit == 'N'
 
-    def test_id_set_from_chargennummer(self, pc_parser):
-        assert pc_parser.features[0].id == 'Meas_ID_Chargennummer'
+    def test_identity_set_from_chargennummer(self, pc_parser):
+        assert pc_parser.features[0].identity == 'Meas_ID_Chargennummer'
 
     def test_vfile_suffix_is_dfx(self, pc_parser):
         assert pc_parser.vfile.suffix == '.dfx'

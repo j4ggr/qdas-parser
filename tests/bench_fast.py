@@ -15,8 +15,6 @@ already in memory.
 from __future__ import annotations
 
 import importlib
-import sys
-import tempfile
 from pathlib import Path
 from typing import Callable
 
@@ -69,11 +67,11 @@ def sample_nested_row() -> list:
 def _load_py() -> tuple[Callable, Callable]:
     """Import the pure-Python implementations directly (bypass any compiled ext)."""
     import sys
-    spec = importlib.util.spec_from_file_location(
+    import importlib.util as ilu
+    spec = ilu.spec_from_file_location(
         'qdas_parser._fast_py',
-        Path(__file__).parents[1] / 'src/qdas_parser/_fast.py',
-    )
-    mod = importlib.util.module_from_spec(spec)
+        Path(__file__).parents[1] / 'src/qdas_parser/_fast.py',)
+    mod = ilu.module_from_spec(spec)
     mod.__package__ = 'qdas_parser'
     sys.modules['qdas_parser._fast_py'] = mod
     spec.loader.exec_module(mod)
