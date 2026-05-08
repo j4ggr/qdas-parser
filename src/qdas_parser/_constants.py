@@ -1,5 +1,4 @@
-"""Package-level constants derived from the bundled ``qdas.toml`` config.
-
+"""
 All downstream modules import from here so the TOML is only loaded once
 and the compiled regex objects are shared across all parser instances.
 """
@@ -15,12 +14,11 @@ __all__ = ['QDAS', 'FIELD_CATEGORY']
 
 @dataclass(frozen=True)
 class _Spec:
-    """Container for package-level constants derived from the bundled 
-    config.
+    """Container for package-level constants.
 
-    This class is not intended to be instantiated; it serves as a 
+    This class is not intended to be instantiated; it serves as a
     namespace for related constants and their docstrings. The actual
-    constant values are defined at the module level below for direct 
+    constant values are defined at the module level below for direct
     import.
     """
 
@@ -73,7 +71,7 @@ class _Spec:
     """
 
 QDAS = _Spec()
-"""Package-level constants derived from the bundled ``qdas.toml`` config.
+"""Package-level constants.
 
 Access individual constants as attributes, e.g. ``QDAS.SEP_F``.
 
@@ -91,7 +89,7 @@ The constants include:
 
 @dataclass(frozen=True)
 class _FieldCategory:
-    """Category mapping for K-Field keys derived from ``qdas.toml``.
+    """Category mapping for K-Field keys.
 
     Category is determined by the thousands-digit group of the K-Field
     number (e.g. ``'1'`` from ``'K1001'``, ``'10'`` from ``'K10100'``).
@@ -133,9 +131,9 @@ class _FieldCategory:
         Returns
         -------
         str
-            Category name from ``qdas.toml >> fields >> category``.
-            Returns the last defined category (``'extensions'``) for
-            any thousands group beyond the defined range.
+            Category name. Returns the last defined category
+            (``'extensions'``) for any thousands group beyond the
+            defined range.
         """
         if not key.startswith('K') or not key[1:].isdigit():
             raise ValueError(
