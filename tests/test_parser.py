@@ -119,21 +119,17 @@ class TestBDDataframe:
         df = bd_parser.dataframe(add_head=False)
         assert isinstance(df, pd.DataFrame)
 
-    def test_index_has_three_levels(self, bd_parser):
+    def test_index_has_two_levels(self, bd_parser):
         df = bd_parser.dataframe(add_head=False)
-        assert df.index.nlevels == 3
+        assert df.index.nlevels == 2
 
     def test_index_names(self, bd_parser):
         df = bd_parser.dataframe(add_head=False)
-        assert list(df.index.names) == ['Teilenummer', 'Auftrag', 'Teile ID']
-
-    def test_teilenummer_in_index(self, bd_parser):
-        df = bd_parser.dataframe(add_head=False)
-        assert '1234567' in df.index.get_level_values('Teilenummer')
+        assert list(df.index.names) == ['Auftragsnummer', 'Seriennummer']
 
     def test_part_id_from_chargennummer(self, bd_parser):
         df = bd_parser.dataframe(add_head=False)
-        part_ids = df.index.get_level_values('Teile ID').tolist()
+        part_ids = df.index.get_level_values('Seriennummer').tolist()
         assert 'LOT0001' in part_ids
         assert 'LOT0002' in part_ids
 
@@ -224,10 +220,6 @@ class TestPCDataframe:
     def test_two_data_rows(self, pc_parser):
         df = pc_parser.dataframe(add_head=False)
         assert len(df) == 2
-
-    def test_teilenummer_in_index(self, pc_parser):
-        df = pc_parser.dataframe(add_head=False)
-        assert '7654321' in df.index.get_level_values('Teilenummer')
 
     def test_feature_columns_present(self, pc_parser):
         df = pc_parser.dataframe(add_head=False)

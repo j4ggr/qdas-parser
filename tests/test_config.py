@@ -7,11 +7,6 @@ def test_config_is_dict():
     assert isinstance(QDAS_CONFIG, dict)
 
 
-def test_config_has_index_columns():
-    assert 'index_columns' in QDAS_CONFIG
-    assert QDAS_CONFIG['index_columns'] == ['Teilenummer', 'Auftrag', 'Teile ID']
-
-
 def test_config_has_features_sep():
     assert QDAS_CONFIG['features']['sep']['dec'] == 15
 

@@ -55,7 +55,7 @@ df  = qdas.dataframe()   # measurement data as MultiIndex DataFrame
 dfm = qdas.metadata()    # feature metadata as MultiIndex DataFrame
 ```
 
-The DataFrame index is `['Teilenummer', 'Auftrag', 'Teile ID']`.  
+The DataFrame index is `['Auftragsnummer', 'Seriennummer']`.  
 Columns are a two-level `MultiIndex`: `(module_name, feature_label)`.
 
 ---
@@ -154,9 +154,10 @@ from qdas_parser import QDAS
 
 QDAS.SEP_F          # feature separator character (ASCII 15)
 QDAS.SEP_E          # extension separator character (ASCII 20)
-QDAS.INDEX_COLUMNS  # ['Teilenummer', 'Auftrag', 'Teile ID']
-QDAS.ORDER          # 'Auftrag'
-QDAS.PART_ID        # 'Teile ID'
+QDAS.INDEX_COLUMNS  # ['Auftragsnummer', 'Seriennummer']
+QDAS.TIMESTAMP      # 'Zeitstempel'
+QDAS.ORDER          # 'Auftragsnummer'
+QDAS.PART_ID        # 'Seriennummer'
 ```
 
 ---

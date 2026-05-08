@@ -29,7 +29,7 @@ def test_index_columns_returns_list():
 
 
 def test_index_columns_correct_values():
-    assert QDAS.INDEX_COLUMNS == ['Teilenummer', 'Auftrag', 'Teile ID']
+    assert QDAS.INDEX_COLUMNS == ['Auftragsnummer', 'Seriennummer']
 
 
 def test_index_columns_is_fresh_copy():
@@ -41,17 +41,20 @@ def test_index_columns_is_fresh_copy():
 
 
 # ---------------------------------------------------------------------------
-# PART_ID and ORDER
+# PART_ID, ORDER and TIMESTAMP constants
 # ---------------------------------------------------------------------------
 
 def test_part_id_is_last_index_column():
     assert QDAS.PART_ID == QDAS.INDEX_COLUMNS[-1]
-    assert QDAS.PART_ID == 'Teile ID'
+    assert QDAS.PART_ID == 'Seriennummer'
 
 
 def test_order_is_auftrag():
-    assert QDAS.ORDER == 'Auftrag'
+    assert QDAS.ORDER == 'Auftragsnummer'
 
+
+def test_timestamp_is_zeitstempel():
+    assert QDAS.TIMESTAMP == 'Zeitstempel'
 
 # ---------------------------------------------------------------------------
 # Immutability

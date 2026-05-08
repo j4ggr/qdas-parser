@@ -33,21 +33,25 @@ class _QDASConstants:
     SEP_E: str = chr(QDAS_CONFIG['extensions']['sep']['dec'])
     """Extension separator character (ASCII 20, i.e. ``0x14``)."""
 
-    _index_columns: Tuple[str, ...] = tuple(QDAS_CONFIG['index_columns'])
-    """Ordered tuple of index column names: 
-    ``('Teilenummer', 'Auftrag', 'Teile ID')``."""
-
     @property
     def INDEX_COLUMNS(self) -> List[str]:
-        """Ordered list of index column names: 
-        ``['Teilenummer', 'Auftrag', 'Teile ID']``."""
-        return list(self._index_columns)
+        """Ordered list of index column names (read-only).
+        
+        The order of these columns is significant for parsing and should 
+        not be modified. It is used to set the index columns of the
+        resulting DataFrame in the correct order.
+        """
+        return [self.ORDER, self.PART_ID]
     
-    PART_ID: str = tuple(QDAS_CONFIG['index_columns'])[-1]
-    """Column name for the part identity (``'Teile ID'``)."""
+    TIMESTAMP: Literal['Zeitstempel'] = 'Zeitstempel'
+    """Column name for the timestamp (``'Zeitstempel'``)."""
 
-    ORDER: Literal['Auftrag'] = 'Auftrag'
-    """Column name for the production order."""
+    PART_ID: Literal['Seriennummer'] = 'Seriennummer'
+    """Column name for the part identity (``'Seriennummer'``)."""
+
+    ORDER: Literal['Auftragsnummer'] = 'Auftragsnummer'
+    """Column name for the production order number 
+    (``'Auftragsnummer'``)."""
 
     RE_HEADER: Pattern = re.compile(
         QDAS_CONFIG['fields']['regex_pattern']['header_file'])
@@ -68,9 +72,10 @@ The constants include:
 - ``SEP_F``: Feature separator character (ASCII 15, i.e. ``0x0F``).
 - ``SEP_E``: Extension separator character (ASCII 20, i.e. ``0x14``).
 - ``INDEX_COLUMNS``: Ordered list of index column names:
-    ``['Teilenummer', 'Auftrag', 'Teile ID']``.
-- ``PART_ID``: Column name for the part identity (``'Teile ID'``).
-- ``ORDER``: Column name for the production order (``'Auftrag'``).
+    ``['Auftragsnummer', 'Seriennummer']``.
+- ``TIMESTAMP``: Column name for the timestamp (``'Zeitstempel'``).
+- ``PART_ID``: Column name for the part identity (``'Seriennummer'``).
+- ``ORDER``: Column name for the production order number (``'Auftragsnummer'``).
 - ``RE_HEADER``: Compiled regex that parses a single ``.dfd`` line into
     (key, feature_n, value).
 - ``RE_CLEAN_LINE``: Compiled regex that matches K-Field lines embedded

@@ -241,7 +241,7 @@ class QDASFileParser:
 
             qdas.parse_description()
             columns = list(qdas.gen_columns())
-            # ['Teilenummer', 'Auftrag', 'Teile ID',
+            # ['Auftragsnummer', 'Seriennummer',
             #  <head K-Field names ...>,
             #  'C1_Connector', 'C1_Connector_Supplier', ...]
         """
@@ -342,7 +342,7 @@ class QDASFileParser:
         -------
         DataFrame
             MultiIndex DataFrame with ``('Modul', 'Merkmal')`` column levels
-            and ``['Teilenummer', 'Auftrag', 'Teile ID']`` as the row index.
+            and ``['Auftragsnummer', 'Seriennummer']`` as the row index.
 
         Examples
         --------
