@@ -7,8 +7,7 @@ extension's symbols shadow these at the call sites in ``_parser.py``.
 To add a Cython version:
 
 1. Create ``src/qdas_parser/_fast.pyx`` with identical signatures.
-2. Add a ``build`` hook to ``pyproject.toml`` that compiles the ``.pyx``
-   file (e.g. via ``cython`` + ``setuptools`` or ``meson-python``).
+2. Implement the Cython-optimized versions of the functions.
 3. The ``try/except ImportError`` guard in ``_parser.py`` will prefer the
    compiled extension automatically once it is on the path.
 
