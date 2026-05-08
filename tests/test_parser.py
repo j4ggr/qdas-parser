@@ -12,6 +12,9 @@ import pandas as pd
 from qdas_parser._models import ProductionOrder
 from qdas_parser._parser import QDASFileParser
 
+FIXTURES = Path(__file__).parent / 'fixtures'
+BD_DFD = FIXTURES / 'bd/2603160002.dfd'
+
 
 # ===========================================================================
 # ProductionOrder
@@ -248,3 +251,26 @@ class TestMtime:
 
     def test_pc_fn_date(self, pc_parser):
         assert pc_parser.fn_date == '260402'
+
+
+# ===========================================================================
+# Custom index_columns
+# ===========================================================================
+
+class TestCustomIndexColumns:
+    def test_default_index_columns(self):
+        p = QDASFileParser(BD_DFD, 'ACT1', kind='bd')
+        assert p.index_columns == ['Auftragsnummer', 'Seriennummer']
+
+    def test_custom_index_columns_stored(self):
+        custom = ['Teilenummer', 'Seriennummer']
+        p = QDASFileParser(BD_DFD, 'ACT1', kind='bd', index_columns=custom)
+        assert p.index_columns == custom
+
+    def test_custom_index_columns_used_in_dataframe(self):
+        p = QDASFileParser(BD_DFD, 'ACT1', kind='bd',
+                           index_columns=['Seriennummer'])
+        p.parse_description()
+        p.parse_values()
+        df = p.dataframe(add_head=False)
+        assert df.index.names == ['Seriennummer']

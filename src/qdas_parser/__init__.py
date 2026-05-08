@@ -26,7 +26,7 @@ Public API
 
 :data:`QDAS`
     Package-level constants (``QDAS.SEP_F``, ``QDAS.SEP_E``,
-    ``QDAS.RE_HEADER``, ``QDAS.RE_CLEAN_LINE``, ``QDAS.INDEX_COLUMNS``,
+    ``QDAS.RE_HEADER``, ``QDAS.RE_CLEAN_LINE``,
     ``QDAS.PART_ID``, ``QDAS.ORDER``).
 """
 

@@ -61,6 +61,9 @@ class QDASFileParser:
     line : str, optional
         Assembly-line identifier (e.g. ``'as1'``). When omitted an empty
         string is used, disabling test-cell detection.
+    index_columns : List[str], optional
+        Column names to use as the DataFrame row index, in order.
+        Defaults to ``['Auftragsnummer', 'Seriennummer']``.
 
     Examples
     --------
@@ -205,12 +208,13 @@ class QDASFileParser:
             kind: str | None = None,
             module_name: str | None = None,
             line: str | None = None,
+            index_columns: List[str] | None = None,
         ) -> None:
         self.data = []
         self.head_data = {}
         self.head_columns = []
         self.features = []
-        self.index_columns = QDAS.INDEX_COLUMNS
+        self.index_columns = index_columns if index_columns is not None else [QDAS.ORDER, QDAS.PART_ID]
         self.product = product
         self.dfile = ensure_path(description_file)
         self._kind = kind
@@ -342,7 +346,7 @@ class QDASFileParser:
         -------
         DataFrame
             MultiIndex DataFrame with ``('Modul', 'Merkmal')`` column levels
-            and ``['Auftragsnummer', 'Seriennummer']`` as the row index.
+            and :attr:`index_columns` as the row index.
 
         Examples
         --------

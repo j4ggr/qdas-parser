@@ -21,31 +21,10 @@ def test_sep_e_is_chr20():
 
 
 # ---------------------------------------------------------------------------
-# INDEX_COLUMNS — property returns a fresh list; tuple is immutable
-# ---------------------------------------------------------------------------
-
-def test_index_columns_returns_list():
-    assert isinstance(QDAS.INDEX_COLUMNS, list)
-
-
-def test_index_columns_correct_values():
-    assert QDAS.INDEX_COLUMNS == ['Auftragsnummer', 'Seriennummer']
-
-
-def test_index_columns_is_fresh_copy():
-    a = QDAS.INDEX_COLUMNS
-    b = QDAS.INDEX_COLUMNS
-    assert a == b
-    a.append('EXTRA')
-    assert 'EXTRA' not in QDAS.INDEX_COLUMNS  # mutation doesn't affect the stored tuple
-
-
-# ---------------------------------------------------------------------------
 # PART_ID, ORDER and TIMESTAMP constants
 # ---------------------------------------------------------------------------
 
-def test_part_id_is_last_index_column():
-    assert QDAS.PART_ID == QDAS.INDEX_COLUMNS[-1]
+def test_part_id_is_seriennummer():
     assert QDAS.PART_ID == 'Seriennummer'
 
 

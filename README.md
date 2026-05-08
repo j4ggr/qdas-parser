@@ -96,6 +96,7 @@ parser = QDASFileParser(
     kind="bd",                          # 'bd' | 'pc' — inferred from path if omitted
     tc_modules={"ACT1": {"as1": ["tc1_bd", "tc2_bd"]}},
     tc_shortcut="TC",
+    index_columns=["Auftragsnummer", "Seriennummer"],  # default; customise as needed
 )
 parser.parse_description()
 parser.parse_values()
@@ -154,7 +155,6 @@ from qdas_parser import QDAS
 
 QDAS.SEP_F          # feature separator character (ASCII 15)
 QDAS.SEP_E          # extension separator character (ASCII 20)
-QDAS.INDEX_COLUMNS  # ['Auftragsnummer', 'Seriennummer']
 QDAS.TIMESTAMP      # 'Zeitstempel'
 QDAS.ORDER          # 'Auftragsnummer'
 QDAS.PART_ID        # 'Seriennummer'
