@@ -13,9 +13,12 @@ from typing import KeysView
 from typing import ItemsView
 from typing import ValuesView
 
-from ._config import QDAS_CONFIG
 from ._constants import FIELD_CATEGORY
 from ._constants import QDAS
+from ._fields import CATALOG
+from ._fields import DEFINED
+from ._fields import REQUIRED
+from ._fields import SUPPORTED
 
 
 __all__ = [
@@ -46,10 +49,14 @@ def field_type(
     field_type : Literal['other', 'required', 'defined', 'supported', 'catalog']
         The field type as defined in the configuration.
     """
-    ignore = ('regex_pattern', 'category')
-    for field_type, kfields in QDAS_CONFIG['fields'].items():
-        if field_type not in ignore and kfield_key in kfields.keys():
-            return field_type
+    if kfield_key in REQUIRED:
+        return 'required'
+    if kfield_key in DEFINED:
+        return 'defined'
+    if kfield_key in SUPPORTED:
+        return 'supported'
+    if kfield_key in CATALOG:
+        return 'catalog'
     return 'other'
 
 
@@ -271,22 +278,18 @@ class KField:
         """
         name = self.key
         value = self.value
-        kfield = (QDAS_CONFIG['fields']
-            .get(self.field_type, {})
-            .get(self.key, None))
-        if kfield is None:
-            return name, value
 
         match self.field_type:
             case 'required':
-                name = kfield
-                value = self.value
+                name = REQUIRED[self.key]
             case 'defined':
-                name = kfield['name']
-                value = kfield['values'][self.value]
-            case 'supported' | 'catalog':
-                name = kfield['name']
-                value = self.value
+                field = DEFINED[self.key]
+                name = field.name
+                value = field.values.get(int(self.value), self.value)
+            case 'supported':
+                name = SUPPORTED[self.key]
+            case 'catalog':
+                name = CATALOG[self.key]
             case _:
                 pass
 
@@ -424,7 +427,7 @@ class Feature:
             Total number of extensions including the base value column.
         """
         if amount > 1:
-            extensions = list(QDAS_CONFIG['extensions']['order'].values())
+            extensions = list(QDAS.EXTENSIONS)
             columns = [f'{self.label}_{e}' for e in extensions[1:amount]]
             if len(columns) > 3:
                 self.identity = columns[3]

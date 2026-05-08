@@ -1,18 +1,11 @@
 """Tests for _config.py — TOML loading."""
 
 from qdas_parser._config import QDAS_CONFIG
+from qdas_parser._constants import QDAS
 
 
 def test_config_is_dict():
     assert isinstance(QDAS_CONFIG, dict)
-
-
-def test_config_has_features_sep():
-    assert QDAS_CONFIG['features']['sep']['dec'] == 15
-
-
-def test_config_has_extensions_sep():
-    assert QDAS_CONFIG['extensions']['sep']['dec'] == 20
 
 
 def test_config_has_required_fields():
@@ -21,7 +14,14 @@ def test_config_has_required_fields():
     assert 'K2002' in QDAS_CONFIG['fields']['required']
 
 
-def test_config_has_extensions_order():
-    order = QDAS_CONFIG['extensions']['order']
-    assert order['1'] == 'Wert'
-    assert order['5'] == 'Chargennummer'
+def test_qdas_sep_f_is_15():
+    assert ord(QDAS.SEP_F) == 15
+
+
+def test_qdas_sep_e_is_20():
+    assert ord(QDAS.SEP_E) == 20
+
+
+def test_qdas_extensions_order():
+    assert QDAS.EXTENSIONS[0] == 'Wert'
+    assert QDAS.EXTENSIONS[4] == 'Chargennummer'

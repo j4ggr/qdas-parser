@@ -5,13 +5,11 @@ and the compiled regex objects are shared across all parser instances.
 """
 
 import re
-
 from re import Pattern
-from typing import Tuple
-from typing import Literal
-from dataclasses import dataclass
 
-from ._config import QDAS_CONFIG
+from typing import Literal
+
+from dataclasses import dataclass
 
 __all__ = ['QDAS', 'FIELD_CATEGORY']
 
@@ -108,9 +106,18 @@ class _FieldCategory:
     'extensions'
     """
 
-    CATEGORIES: tuple[str, ...] = tuple(
-        QDAS_CONFIG['fields']['category'][str(i)]
-        for i in range(len(QDAS_CONFIG['fields']['category']))
+    CATEGORIES: tuple[str, ...] = (
+        'description',    # K0xxx
+        'part_data',      # K1xxx
+        'feature_data',   # K2xxx
+        'ppap_data',      # K3xxx
+        'catalog',        # K4xxx
+        'group',          # K5xxx
+        'other',          # K6xxx
+        'other',          # K7xxx
+        'control_chart',  # K8xxx
+        'other',          # K9xxx
+        'extensions',     # K10xxx and above
     )
     """Ordered tuple of category names indexed by the K-Field thousands
     group: ``('description', 'part_data', 'feature_data', …)``."""
