@@ -6,45 +6,8 @@
 # Q-DAS ASCII Transferformat V12 / 2015 Deutsch
 # https://www.q-das.com/fileadmin/mediamanager/Datenformat_Dokumente/Q-DAS_ASCII-Transfer-Format_GER_V12_dc.pdf
 
-[features]
-  [features.sep]
-    hex = '0x0F'
-    dec = 15
-
-[extensions]
-  [extensions.sep]
-    hex = '0x14'
-    dec = 20
-  [extensions.order]
-    1 = 'Wert'
-    2 = 'Attribut'
-    3 = 'Datum/Zeit'
-    4 = 'Ereignisse'
-    5 = 'Chargennummer'
-    6 = 'Nestnummer'
-    7 = 'Prüfnummer'
-    8 = 'Maschinennummer'
-    9 = 'Prozessparameter'
-    10 = 'Prüfmittelnummer'
-
 [fields]
-  [fields.regex_pattern]
-    header_file = '(K\d+)/?(\d+)? (.+)?'
-    clean_line = '^K\d{4,}'
 
-  # Category allocation of the content based on the thousands
-  [fields.category]
-    0 = 'description'
-    1 = 'part_data'
-    2 = 'feature_data'
-    3 = 'test_plan_data'
-    4 = 'administrative_data'
-    5 = 'structural_information'
-    6 = 'extensions'
-    7 = 'extensions'
-    8 = 'qrk'
-    9 = 'other'
-    10 = 'extensions'
 
   #Fields that are required in all header files
   [fields.required]

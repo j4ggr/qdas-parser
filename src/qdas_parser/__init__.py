@@ -28,9 +28,15 @@ Public API
     Package-level constants (``QDAS.SEP_F``, ``QDAS.SEP_E``,
     ``QDAS.RE_HEADER``, ``QDAS.RE_CLEAN_LINE``,
     ``QDAS.PART_ID``, ``QDAS.ORDER``).
+
+:data:`FIELD_CATEGORY`
+    Singleton :class:`_FieldCategory` instance. Maps any K-Field key
+    string to its category (e.g. ``FIELD_CATEGORY['K2002']`` →
+    ``'feature_data'``).
 """
 
 from ._constants import QDAS
+from ._constants import FIELD_CATEGORY
 from ._models import Feature
 from ._models import KField
 from ._models import ProductionOrder
@@ -40,6 +46,7 @@ from ._parser import QDASFileParser
 
 __all__ = [
     'QDAS',
+    'FIELD_CATEGORY',
     'KField',
     'Feature',
     'AssemblyLineModule',

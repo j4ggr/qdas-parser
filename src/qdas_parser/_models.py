@@ -14,6 +14,7 @@ from typing import ItemsView
 from typing import ValuesView
 
 from ._config import QDAS_CONFIG
+from ._constants import FIELD_CATEGORY
 from ._constants import QDAS
 
 
@@ -148,8 +149,7 @@ class KField:
         category string defined in ``qdas.toml >> fields >> category``.
         """
         if not self._category:
-            field_range = self.key[1:-3]
-            self._category = QDAS_CONFIG['fields']['category'][field_range]
+            self._category = FIELD_CATEGORY[self.key]
         return self._category
 
     _field_type: Literal['other', 'required', 'defined', 'supported', 'catalog', '']

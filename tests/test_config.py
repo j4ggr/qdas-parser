@@ -15,11 +15,6 @@ def test_config_has_extensions_sep():
     assert QDAS_CONFIG['extensions']['sep']['dec'] == 20
 
 
-def test_config_has_fields_regex():
-    assert 'header_file' in QDAS_CONFIG['fields']['regex_pattern']
-    assert 'clean_line' in QDAS_CONFIG['fields']['regex_pattern']
-
-
 def test_config_has_required_fields():
     assert 'K0100' in QDAS_CONFIG['fields']['required']
     assert 'K1001' in QDAS_CONFIG['fields']['required']
