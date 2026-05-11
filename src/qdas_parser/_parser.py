@@ -7,7 +7,6 @@ in :mod:`._fast`.
 
 import re
 import copy
-import logging
 
 import numpy as np
 import pandas as pd
@@ -21,14 +20,18 @@ from typing import Generator
 from pathlib import Path
 from pandas.core.api import DataFrame
 
+from ._config import logger
+
 from ._constants import QDAS
-from ._models import KField, Feature, ProductionOrder
+
+from ._models import KField
+from ._models import Feature
+from ._models import ProductionOrder
+
 from ._module import AssemblyLineModule
 
 from ._fast import rows_fast as _rows_fast
 from ._fast import flatten_fast as _flatten_fast
-
-logger = logging.getLogger(__name__)
 
 
 def ensure_path(filepath: str | Path) -> Path:

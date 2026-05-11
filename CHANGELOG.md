@@ -11,6 +11,39 @@ This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [0.2.0] — 2026-05-08
+
+### Added
+
+- `src/qdas_parser/_fields.py` — Python-native K-Field registry replacing
+  `qdas.toml` field data with typed structures and four `MappingProxyType`
+  exports:
+  - `FieldDef` — `NamedTuple` with `name`, `values`, and `comments` fields
+  - `REQUIRED` — five mandatory header fields (`K0100`, `K1001`, `K1002`,
+    `K2001`, `K2002`)
+  - `DEFINED` — ~80 K-Fields with integer-coded value/comment maps
+  - `SUPPORTED` — ~250 documented non-coded fields
+  - `CATALOG` — ~100 catalog fields (`K4xxx`)
+- `QDASFileParser` accepts an `index_columns` parameter
+  (`List[str]`, default `['Auftragsnummer', 'Seriennummer']`) so callers can
+  customise the DataFrame row index without subclassing
+
+### Changed
+
+- `_models.py` — `field_type()`, `KField.decode()`, and `Feature.extend()` now
+  use the `_fields` registries directly; `QDAS_CONFIG` import removed
+- `_constants.py` — `_FieldCategory.CATEGORIES` tuple hardcoded; `QDAS_CONFIG`
+  import removed
+
+### Fixed
+
+- `SUPPORTED` key `K0099` corrected to `K0999` (`'Anzahl Merkmale pro Teil = 0'`)
+- `CATALOG` entries `K4791` and `K4792` were missing; added
+- `_DOKUMENTATIONSPFLICHT` codes 17–20 were bare integers; corrected to
+  string literals so `FieldDef.values: Mapping[int, str]` holds
+
+---
+
 ## [0.1.2] — 2026-05-07
 
 ### Added

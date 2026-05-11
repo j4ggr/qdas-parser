@@ -10,7 +10,7 @@ quality analysis.
 ## Features
 
 - Parse Q-DAS `.dfd` + `.dfx`/`.dfb` file pairs into tidy pandas DataFrames
-- Full K-Field decoding — field names and coded values translated via bundled `qdas.toml`
+- Full K-Field decoding — field names and coded values translated via typed Python registries (`REQUIRED`, `DEFINED`, `SUPPORTED`, `CATALOG`)
 - MultiIndex columns `(module, feature)` for easy slicing across assembly lines
 - Production order normalisation via `format_order()` / `ProductionOrder`
 - Optional test-cell detection through an injected module map

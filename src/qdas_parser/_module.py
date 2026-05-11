@@ -4,13 +4,11 @@ Decoupled from any application config — all external knowledge
 (test-cell map, shortcut string) is injected via constructor parameters.
 """
 
-import logging
-
 from typing import Dict
 from typing import List
 from typing import Literal
 
-logger = logging.getLogger(__name__)
+from ._config import logger
 
 
 class AssemblyLineModule:
